@@ -48,8 +48,7 @@ public class DisplayLevel_FakeInfo : DisplayLevel
     public void Press() {
         targetImage.DOColor(Color.clear, 0.5f);
         canPress = false;
-
-        Invoke("NextDocument", 2f);
+        Invoke("NextDocument", 1f);
     }
 
     public void PressFake() {

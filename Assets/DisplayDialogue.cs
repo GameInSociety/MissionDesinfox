@@ -11,14 +11,31 @@ public class DisplayDialogue : Displayable, IPointerClickHandler {
 
     public TextMeshProUGUI uiText;
 
+    float timer = 0f;
+
+    bool displayed = false;
+
     private void Awake() {
         Instance = this;
+    }
+
+    private void Update() {
+        if ( displayed ) {
+            timer -= Time.deltaTime;
+            if (timer <= 0f) {
+                displayed = false;
+                FadeOut();
+            }
+        }
+
     }
 
     public void Display(string text) {
         FadeIn();
         Tween.Bounce(transform);
         uiText.text = text;
+        timer = 2f;
+        displayed = true;
     }
 
     public void OnPointerClick(PointerEventData eventData) {

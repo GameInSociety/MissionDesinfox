@@ -1,4 +1,7 @@
+using DG.Tweening;
+using DG.Tweening.Core.Easing;
 using JetBrains.Annotations;
+using Mono.Cecil.Cil;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -9,52 +12,118 @@ using UnityEngine.UI;
 
 public class DisplayLevel_Deminage : DisplayLevel
 {
-    public Displayable[] displayables;
-    public TextMeshProUGUI[] uiTexts;
+    public static DisplayLevel_Deminage Instance;
+
+   public  bool canPressButton = false;
+    public bool canPressZone = false;
+
+    int catsCount = 0;
+
+    public DeminageButton[] buttons;
 
     public Image mask_image;
 
     public Transform scaler;
 
-    public GameObject prefab;
-    public List<GameObject> prefabList = new List<GameObject>();
+    public Category zoneCategory;
+
+    public DeminageZone zonePrefab;
+    public List<DeminageZone> zones = new List<DeminageZone>();
 
     public RectTransform cadre;
 
-    public override void Start() {
-        base.Start();
-        uiTexts = new TextMeshProUGUI[displayables.Length];
-        for (int i = 0; i < displayables.Length; i++) {
-            uiTexts[i] = displayables[i].GetComponentInChildren<TextMeshProUGUI>();
-        }
-
+    private void Awake() {
+        Instance = this;
     }
 
-    public override void Update() {
-        base.Update();
+    public override void Start() {
+        base.Start();
+        foreach (var item in buttons) {
+            item.Hide();
+        }
+    }
 
+    public override void StartLevel() {
+        base.StartLevel();
+        canPressZone = true;
+    }
+
+    public void PressZone (int i) {
+        if ( i >= GetCurrentDocument().categories.Count) {
+            Debug.Log($"ERROR : more zones than categories on db");
+            return;
+        }
+        if (!canPressZone)
+            return;
+        canPressZone = false;
+        canPressButton = true;
+        zoneCategory = GetCurrentDocument().categories[i];
+        Debug.Log($"pressed zone : {zoneCategory.name}");
+        StartCoroutine(ShowButtonsCoroutine());
     }
 
     public void PressCatButton(int i) {
-        Debug.Log($"Pressed {i}");
+        if (!canPressButton) return;
+        // continue
+        canPressButton = false;
+        canPressZone = true;
+
+        foreach (var item in buttons) {
+            item.FadeOut();
+        }
+        var pressedCat = GetCurrentDocument().categories[i];
+        Debug.Log($"Match {pressedCat.name} / {zoneCategory.name}");
+
+        if ( pressedCat.name == zoneCategory.name) {
+            ++catsCount;
+            MissionDisplay.instance.DisplayGoodFeedback();
+            zones[i].Lock();
+            buttons[i].Lock();
+            if (catsCount == GetCurrentDocument().categories.Count) {
+                ++correctAnswers;
+                // finish
+                targetImage.DOColor(Color.clear, 0.5f);
+                foreach (var item in buttons) {
+                    item.FadeOut();
+                }
+                Invoke("NextDocument", 1f);
+                return;
+            } else {
+
+            }
+        } else {
+            MissionDisplay.instance.DisplayBadFeedback();
+            foreach (var zone in zones) {
+                zone.over = false;
+            }
+
+        }
+
+       
+
+       
+            
     }
 
     public override void UpdateCurrentDocument() {
         base.UpdateCurrentDocument();
 
-        foreach (var displayable in displayables) {
+        catsCount = 0;
+        foreach (var displayable in buttons) {
+            displayable.locked = false;
             displayable.Hide();
         }
-        StartCoroutine(ShowButtonsCoroutine());
+        //StartCoroutine(ShowButtonsCoroutine());
     }
 
     IEnumerator ShowButtonsCoroutine() {
 
         var categories = GetCurrentDocument().categories;
         for (int i = 0; i < categories.Count; i++) {
-            yield return new WaitForSeconds(0.5f);
-            displayables[i].FadeIn();
-            uiTexts[i].text = categories[i].name;
+            
+            buttons[i].Display(categories[i].name);
+            buttons[i].index = i;
+            yield return new WaitForSeconds(0.01f);
         }
     }
 
@@ -62,25 +131,34 @@ public class DisplayLevel_Deminage : DisplayLevel
     public class PixelGroup {
         public Vector2 start;
         public Vector2 end;
-        public Color c;
+        public Color color;
         public string hexa;
     }
 
     public List<PixelGroup> pixelGroups = new List<PixelGroup>();
 
     public override void UpdateImage() {
-        base.UpdateImage();
-
+        //base.UpdateImage();
+        var sprite = GetCurrentDocument().GetSprite();
+        targetImage.sprite = sprite;
         targetImage.SetNativeSize();
         mask_image.sprite = GetCurrentDocument().GetMask();
         mask_image.SetNativeSize();
+        targetImage.color = Color.white;
 
         StartCoroutine(image());
     }
 
+    void puer() {
+        targetImage.transform.localScale = Vector3.zero;
+        targetImage.transform.DOScale(0f, 0.5f).SetEase(Ease.InBounce);
+        targetImage.DOColor(Color.white, 0.5f);
+    }
+
     IEnumerator image() {
 
-        yield return new WaitForSeconds(2f);
+        pixelGroups.Clear();
+        yield return new WaitForEndOfFrame();
         for (int x = 0; x < mask_image.mainTexture.width; x++) {
             for (int y = 0; y < mask_image.mainTexture.height; y++) {
 
@@ -88,11 +166,11 @@ public class DisplayLevel_Deminage : DisplayLevel
                 if (color.a < 0.1f)
                     continue;
 
-                var pixelGroup = pixelGroups.Find(x => x.c == color);
+                var pixelGroup = pixelGroups.Find(x => x.color == color);
                 if (pixelGroup == null) {
                     pixelGroup = new PixelGroup();
                     pixelGroup.start = new Vector2(x, y);
-                    pixelGroup.c = color;
+                    pixelGroup.color = color;
                     pixelGroups.Add(pixelGroup);
                 }
 
@@ -104,22 +182,27 @@ public class DisplayLevel_Deminage : DisplayLevel
             }
         }
 
-        foreach (var item in prefabList) {
-            item.SetActive(false);
+        foreach (var item in zones) {
+            item.gameObject.SetActive(false);
         }
 
         int index = 0;
         foreach (var item in pixelGroups) {
-            if (index >= prefabList.Count) {
-                var go = Instantiate(prefab, scaler);
-                prefabList.Add(go);
+            if (index >= GetCurrentDocument().categories.Count)
+                break;
+            if (index >= zones.Count) {
+                DeminageZone dz = Instantiate(zonePrefab, scaler);
+                zones.Add(dz);
             }
 
             Vector2 pos = item.start;
 
-            prefabList[index].GetComponent<RectTransform>().sizeDelta = new Vector2(item.end.x - item.start.x, item.end.y - item.start.y); ;
-            prefabList[index].GetComponent<RectTransform>().anchoredPosition = item.start;
-            prefabList[index].GetComponent<Image>().color = item.c;
+
+            zones[index].gameObject.SetActive(true);
+            zones[index].GetComponent<RectTransform>().sizeDelta = new Vector2(item.end.x - item.start.x, item.end.y - item.start.y); ;
+            zones[index].GetComponent<RectTransform>().anchoredPosition = item.start;
+            zones[index].Display(index, GetCurrentDocument().categories[index], item.color);
+
             index++;
             yield return new WaitForEndOfFrame();
         }

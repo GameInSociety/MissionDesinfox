@@ -88,6 +88,14 @@ public class Displayable : MonoBehaviour
         FadeInDelay();
     }
 
+    public void FadeTo(float alpha) {
+        CanvasGroup.DOKill();
+        Show();
+        CanvasGroup.alpha = 0f;
+
+        CanvasGroup.DOFade(alpha, fade_duration).SetDelay(0.5f);
+    }
+
     public void FadeIn()
     {
         CanvasGroup.DOKill();

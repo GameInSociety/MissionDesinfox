@@ -20,6 +20,7 @@ public class DisplayLevel : Displayable
     public int correctAnswers = 0;
 
 
+
     public Document GetCurrentDocument() {
         return level.documents[documentIndex];
     }
@@ -57,6 +58,8 @@ public class DisplayLevel : Displayable
         UpdateImage();
 
         Invoke("UpdateCurrentDocumentDelay", 0.5f);
+        MissionDisplay.instance.badFeedback_Obj.SetActive(false);
+        MissionDisplay.instance.goodFeedback_Obj.SetActive(false);
     }
 
     public virtual void UpdateImage() {
@@ -65,12 +68,12 @@ public class DisplayLevel : Displayable
         targetImage.transform.localScale = Vector3.zero;
         targetImage.transform.DOScale(0f, 0.5f).SetEase(Ease.InBounce);
         targetImage.DOColor(Color.white, 0.5f);
+
+        
     }
 
     public virtual void UpdateCurrentDocumentDelay() {
         ShowImage();
-        MissionDisplay.instance.badFeedback_Obj.SetActive(false);
-        MissionDisplay.instance.goodFeedback_Obj.SetActive(false);
     }
 
     public virtual void ShowImage() {

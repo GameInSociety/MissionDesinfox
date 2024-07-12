@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,11 +10,15 @@ public class DisplayLevel_OpVsInfo : DisplayLevel
 
     public int correctImage = 0;
 
-    bool canPlay = false;
+    bool canInteract = false;
 
 
-    public void PressImage(int i) {
-        if ( correctImage == i) {
+    public void PressImage(int index) {
+        if (!canInteract) {
+            return;
+        }
+
+        if ( correctImage == index) {
             ++correctAnswers;
             MissionDisplay.instance.DisplayGoodFeedback();
         } else {
@@ -21,13 +26,24 @@ public class DisplayLevel_OpVsInfo : DisplayLevel
         }
 
         Invoke($"NextDocument", 2f);
-        Debug.Log($"Press {i}");
-        canPlay = false;
+        Debug.Log($"Press {index}");
+        canInteract = false;
+
+        for (int i = 0; i < images.Length; i++) {
+            if ( i == index)
+                images[i].DOColor(Color.clear, 0.5f).SetDelay(1f);
+            else
+                images[i].DOColor(Color.clear, 0.5f);
+
+        }
     }
 
     public override void UpdateCurrentDocument() {
         base.UpdateCurrentDocument();
-        canPlay = true;
+        canInteract = true;
+        foreach (var item in images) {
+            item.DOColor(Color.white, 0.5f);
+        }
     }
 
     public override void UpdateImage() {
@@ -36,14 +52,10 @@ public class DisplayLevel_OpVsInfo : DisplayLevel
         
         foreach ( var item in images ) {
             item.sprite = sprite;
-            item.transform.localScale = Vector3.zero;
         }
     }
 
     public override void ShowImage() {
         //base.ShowImage();
-        foreach ( var item in images ) {
-            Tween.Bounce(item.rectTransform);
-        }
     }
 }

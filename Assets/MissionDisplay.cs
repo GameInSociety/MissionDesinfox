@@ -53,7 +53,7 @@ public class MissionDisplay : Displayable
         score_Displayable.FadeIn();
 
         int time_i = Mathf.RoundToInt(time);
-        timeSpent_text.text = System.TimeSpan.FromSeconds(time_i).ToString("mm:ss");
+        timeSpent_text.text = $"{time_i} secondes";
 
         correctResponses_Text.text = $"{correctAnsers} / {totalAnswers}";
 
@@ -64,6 +64,9 @@ public class MissionDisplay : Displayable
     }
 
     public void DisplayGoodFeedback() {
+
+        DisplayDialogue.Instance.Display("C'est ça !");
+
         goodFeedback_Obj.SetActive(true);
 
         for (int j = 0; j < lives_Images.Length; j++) {
@@ -75,14 +78,20 @@ public class MissionDisplay : Displayable
 
     }
 
+
+
+    public void Help() {
+        DisplayDialogue.Instance.Display("Besoin d'aide ?");
+    }
     public void DisplayBadFeedback() {
+        DisplayDialogue.Instance.Display("Raté !");
         badFeedback_Obj.SetActive(true);
+        --lives;
 
         for (int j = 0; j < lives_Images.Length; j++) {
             lives_Images[j].color = lives > j ? Color.white : Color.black;
         }
 
-        --lives;
         UpdateCharacter();   
     }
 

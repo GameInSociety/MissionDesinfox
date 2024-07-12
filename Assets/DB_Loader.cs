@@ -26,7 +26,7 @@ public class DB_Loader : DataDownloader
 
             for (int i = 0; i < 4; ++i) {
                 int index = 9 + i;
-                if (!string.IsNullOrEmpty(cells[index])) {
+                if (cells[index].StartsWith("x")) {
                     LevelManager.Instance.levels[i].documents.Add(newDocument);
                 }
             }
