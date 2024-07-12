@@ -10,6 +10,8 @@ public class MissionDisplay : Displayable
 
     public DisplayLevel[] displayLevels;
 
+    public TextMeshProUGUI title_text;
+
     public Displayable score_Displayable;
 
     public TextMeshProUGUI correctResponses_Text;
@@ -47,6 +49,8 @@ public class MissionDisplay : Displayable
         lives = 3;
 
         UpdateCharacter();
+
+        title_text.text = level.name;
     }
 
     public void ShowScore(float time, int correctAnsers, int totalAnswers) {
@@ -69,10 +73,6 @@ public class MissionDisplay : Displayable
 
         goodFeedback_Obj.SetActive(true);
 
-        for (int j = 0; j < lives_Images.Length; j++) {
-            lives_Images[j].color = lives > j ? Color.white: Color.black;
-        }
-
         UpdateCharacter();
 
 
@@ -88,14 +88,13 @@ public class MissionDisplay : Displayable
         badFeedback_Obj.SetActive(true);
         --lives;
 
-        for (int j = 0; j < lives_Images.Length; j++) {
-            lives_Images[j].color = lives > j ? Color.white : Color.black;
-        }
-
         UpdateCharacter();   
     }
 
     void UpdateCharacter() {
+        for (int j = 0; j < lives_Images.Length; j++) {
+            lives_Images[j].color = lives > j ? Color.white : Color.black;
+        }
         Tween.Bounce(character_RectTransform);
         int i = Mathf.Clamp(lives, 0, 5);
         character_Image.sprite = character_Sprites[i];

@@ -17,6 +17,8 @@ public class DisplayLevel_Deminage : DisplayLevel
    public  bool canPressButton = false;
     public bool canPressZone = false;
 
+    public GameObject loading_group;
+
     int catsCount = 0;
 
     public DeminageButton[] buttons;
@@ -83,8 +85,8 @@ public class DisplayLevel_Deminage : DisplayLevel
                 ++correctAnswers;
                 // finish
                 targetImage.DOColor(Color.clear, 0.5f);
-                foreach (var item in buttons) {
-                    item.FadeOut();
+                foreach (var item in zones) {
+                    item.gameObject.SetActive(false);
                 }
                 Invoke("NextDocument", 1f);
                 return;
@@ -144,9 +146,12 @@ public class DisplayLevel_Deminage : DisplayLevel
         targetImage.SetNativeSize();
         mask_image.sprite = GetCurrentDocument().GetMask();
         mask_image.SetNativeSize();
-        targetImage.color = Color.white;
 
         StartCoroutine(image());
+    }
+
+    public override void ShowImage() {
+        //base.ShowImage();
     }
 
     void puer() {
@@ -157,8 +162,12 @@ public class DisplayLevel_Deminage : DisplayLevel
 
     IEnumerator image() {
 
+        Debug.Log($"loading image");
+        loading_group.SetActive(true);
+        targetImage.color = Color.clear;
         pixelGroups.Clear();
         yield return new WaitForEndOfFrame();
+        int loadLimit = 0;
         for (int x = 0; x < mask_image.mainTexture.width; x++) {
             for (int y = 0; y < mask_image.mainTexture.height; y++) {
 
@@ -180,6 +189,14 @@ public class DisplayLevel_Deminage : DisplayLevel
                     pixelGroup.end.y = y;
 
             }
+
+            ++loadLimit;
+            if ( loadLimit > 30) {
+                loadLimit = 0;
+                yield return new WaitForEndOfFrame();
+            }
+
+
         }
 
         foreach (var item in zones) {
@@ -236,5 +253,9 @@ public class DisplayLevel_Deminage : DisplayLevel
         Debug.Log($"rap : {rap}");
 
         scaler.localScale = rap;
+        yield return new WaitForEndOfFrame();
+
+        targetImage.DOColor(Color.white, 0.5f);
+        loading_group.SetActive(false);
     }
 }
