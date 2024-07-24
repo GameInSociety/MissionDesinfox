@@ -55,7 +55,4 @@ public class DisplayLevel_OpVsInfo : DisplayLevel
         }
     }
 
-    public override void ShowImage() {
-        //base.ShowImage();
-    }
 }

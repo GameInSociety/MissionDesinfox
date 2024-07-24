@@ -14,25 +14,14 @@ public class DisplayLevel_Deminage : DisplayLevel
 {
     public static DisplayLevel_Deminage Instance;
 
-   public  bool canPressButton = false;
-    public bool canPressZone = false;
-
-    public GameObject loading_group;
+    public  bool canPressButton = false;
 
     int catsCount = 0;
 
     public DeminageButton[] buttons;
 
-    public Image mask_image;
-
-    public Transform scaler;
-
     public Category zoneCategory;
 
-    public DeminageZone zonePrefab;
-    public List<DeminageZone> zones = new List<DeminageZone>();
-
-    public RectTransform cadre;
 
     private void Awake() {
         Instance = this;
@@ -47,7 +36,6 @@ public class DisplayLevel_Deminage : DisplayLevel
 
     public override void StartLevel() {
         base.StartLevel();
-        canPressZone = true;
     }
 
     public void PressZone (int i) {
@@ -55,9 +43,6 @@ public class DisplayLevel_Deminage : DisplayLevel
             Debug.Log($"ERROR : more zones than categories on db");
             return;
         }
-        if (!canPressZone)
-            return;
-        canPressZone = false;
         canPressButton = true;
         zoneCategory = GetCurrentDocument().categories[i];
         Debug.Log($"pressed zone : {zoneCategory.name}");
@@ -68,7 +53,6 @@ public class DisplayLevel_Deminage : DisplayLevel
         if (!canPressButton) return;
         // continue
         canPressButton = false;
-        canPressZone = true;
 
         foreach (var item in buttons) {
             item.FadeOut();
@@ -79,13 +63,13 @@ public class DisplayLevel_Deminage : DisplayLevel
         if ( pressedCat.name == zoneCategory.name) {
             ++catsCount;
             MissionDisplay.instance.DisplayGoodFeedback();
-            zones[i].Lock();
+            interactibleElements[i].Lock();
             buttons[i].Lock();
             if (catsCount == GetCurrentDocument().categories.Count) {
                 ++correctAnswers;
                 // finish
                 targetImage.DOColor(Color.clear, 0.5f);
-                foreach (var item in zones) {
+                foreach (var item in interactibleElements) {
                     item.gameObject.SetActive(false);
                 }
                 Invoke("NextDocument", 1f);
@@ -95,7 +79,7 @@ public class DisplayLevel_Deminage : DisplayLevel
             }
         } else {
             MissionDisplay.instance.DisplayBadFeedback();
-            foreach (var zone in zones) {
+            foreach (var zone in interactibleElements) {
                 zone.over = false;
             }
 
@@ -129,133 +113,4 @@ public class DisplayLevel_Deminage : DisplayLevel
         }
     }
 
-    [System.Serializable]
-    public class PixelGroup {
-        public Vector2 start;
-        public Vector2 end;
-        public Color color;
-        public string hexa;
-    }
-
-    public List<PixelGroup> pixelGroups = new List<PixelGroup>();
-
-    public override void UpdateImage() {
-        //base.UpdateImage();
-        var sprite = GetCurrentDocument().GetSprite();
-        targetImage.sprite = sprite;
-        targetImage.SetNativeSize();
-        mask_image.sprite = GetCurrentDocument().GetMask();
-        mask_image.SetNativeSize();
-
-        StartCoroutine(image());
-    }
-
-    public override void ShowImage() {
-        //base.ShowImage();
-    }
-
-    void puer() {
-        targetImage.transform.localScale = Vector3.zero;
-        targetImage.transform.DOScale(0f, 0.5f).SetEase(Ease.InBounce);
-        targetImage.DOColor(Color.white, 0.5f);
-    }
-
-    IEnumerator image() {
-
-        Debug.Log($"loading image");
-        loading_group.SetActive(true);
-        targetImage.color = Color.clear;
-        pixelGroups.Clear();
-        yield return new WaitForEndOfFrame();
-        int loadLimit = 0;
-        for (int x = 0; x < mask_image.mainTexture.width; x++) {
-            for (int y = 0; y < mask_image.mainTexture.height; y++) {
-
-                var color = mask_image.sprite.texture.GetPixel(x, y);
-                if (color.a < 0.1f)
-                    continue;
-
-                var pixelGroup = pixelGroups.Find(x => x.color == color);
-                if (pixelGroup == null) {
-                    pixelGroup = new PixelGroup();
-                    pixelGroup.start = new Vector2(x, y);
-                    pixelGroup.color = color;
-                    pixelGroups.Add(pixelGroup);
-                }
-
-                if (pixelGroup.end.x < x)
-                    pixelGroup.end.x = x;
-                if (pixelGroup.end.y < y)
-                    pixelGroup.end.y = y;
-
-            }
-
-            ++loadLimit;
-            if ( loadLimit > 30) {
-                loadLimit = 0;
-                yield return new WaitForEndOfFrame();
-            }
-
-
-        }
-
-        foreach (var item in zones) {
-            item.gameObject.SetActive(false);
-        }
-
-        int index = 0;
-        foreach (var item in pixelGroups) {
-            if (index >= GetCurrentDocument().categories.Count)
-                break;
-            if (index >= zones.Count) {
-                DeminageZone dz = Instantiate(zonePrefab, scaler);
-                zones.Add(dz);
-            }
-
-            Vector2 pos = item.start;
-
-
-            zones[index].gameObject.SetActive(true);
-            zones[index].GetComponent<RectTransform>().sizeDelta = new Vector2(item.end.x - item.start.x, item.end.y - item.start.y); ;
-            zones[index].GetComponent<RectTransform>().anchoredPosition = item.start;
-            zones[index].Display(index, GetCurrentDocument().categories[index], item.color);
-
-            index++;
-            yield return new WaitForEndOfFrame();
-        }
-
-
-        var textureScale = new Vector2(mask_image.sprite.texture.width, mask_image.sprite.texture.height);
-
-
-        targetImage.rectTransform.sizeDelta = cadre.sizeDelta;
-
-        yield return new WaitForEndOfFrame();
-
-        Debug.Log($"init scale : {mask_image.sprite.texture.width}");
-        Debug.Log($"new scale : {targetImage.rectTransform.rect.width}");
-
-        Vector2 s = targetImage.rectTransform.sizeDelta;
-
-        var nl = targetImage.rectTransform.rect.width / textureScale.x;
-
-        Debug.Log($"lerp : {nl}");
-
-        s.y = targetImage.rectTransform.rect.width / textureScale.x * textureScale.y;
-        targetImage.rectTransform.sizeDelta = s;
-
-        yield return new WaitForEndOfFrame();
-
-
-
-
-        var rap = targetImage.rectTransform.rect.size / textureScale;
-        Debug.Log($"rap : {rap}");
-
-        scaler.localScale = rap;
-        yield return new WaitForEndOfFrame();
-
-        targetImage.DOColor(Color.white, 0.5f);
-        loading_group.SetActive(false);
-    }
 }

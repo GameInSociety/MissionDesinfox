@@ -18,20 +18,12 @@ public class DisplayLevel_FakeInfo : DisplayLevel
         button_Info.Hide();
     }
 
-    public override void UpdateCurrentDocumentDelay() {
-        base.UpdateCurrentDocumentDelay();
-
-        button_Fake.Hide();
-        button_Info.Hide();
-        Invoke("Delay", 0f);
-    }
-
-    void Delay() {
+    public override void UpdateCurrentDocument() {
+        base.UpdateCurrentDocument();
         button_Fake.FadeIn();
         button_Info.FadeIn();
-        canPress = true;
+        Invoke("Delay", 0f);
     }
-
     public void PressInfo() {
         if (!GetCurrentDocument().fake) {
             ++correctAnswers;

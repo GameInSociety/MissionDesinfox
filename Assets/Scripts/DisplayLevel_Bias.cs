@@ -43,12 +43,6 @@ public class DisplayLevel_Bias : DisplayLevel
         foreach (var button in buttons) {
             button.Hide();
         }
-    }
-
-    public override void UpdateCurrentDocumentDelay() {
-        base.UpdateCurrentDocumentDelay();
-
-
         StartCoroutine(ShowButtonsCoroutine());
     }
 
