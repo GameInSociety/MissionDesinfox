@@ -4582,10 +4582,10 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 8631772987c88a44284c8e02e8793439, type: 3}
   - {fileID: 21300000, guid: 844fb313d27c54d4eb4298c1ec7951ff, type: 3}
   title_sprites:
-  - {fileID: 21300000, guid: 45de58536afab884189ac0f2811a47d0, type: 3}
-  - {fileID: 21300000, guid: 4c8c6237d2bb849419932aa526653e3c, type: 3}
-  - {fileID: 21300000, guid: e24b70ae6ef47d0448103e9fcb507259, type: 3}
-  - {fileID: 21300000, guid: 93f2b1b0697e5af42a2bae3b9feca88e, type: 3}
+  - {fileID: 21300000, guid: ef3650e67fb7e594cb0a15fe7ca93daf, type: 3}
+  - {fileID: 21300000, guid: a4b468ec168482647a7387b65be60a25, type: 3}
+  - {fileID: 21300000, guid: 6973f26aa6fb3f94e9a8dce311f34f20, type: 3}
+  - {fileID: 21300000, guid: 80434b61d716d3a4d88c906a4884fe32, type: 3}
   bg_image: {fileID: 401741986}
   rect_image: {fileID: 2238434097050671162}
   title_image: {fileID: 1339121806}
