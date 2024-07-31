@@ -39,25 +39,25 @@ public class DisplayLevel_Deminage : DisplayLevel
     }
 
     public void PressZone (int i) {
-        if ( i >= GetCurrentDocument().categories.Count) {
+        /*if ( i >= GetCurrentDocument().elements.Count) {
             Debug.Log($"ERROR : more zones than categories on db");
             return;
         }
         canPressButton = true;
-        zoneCategory = GetCurrentDocument().categories[i];
+        zoneCategory = GetCurrentDocument().elements[i];
         Debug.Log($"pressed zone : {zoneCategory.name}");
-        StartCoroutine(ShowButtonsCoroutine());
+        StartCoroutine(ShowButtonsCoroutine());*/
     }
 
     public void PressCatButton(int i) {
-        if (!canPressButton) return;
+       /* if (!canPressButton) return;
         // continue
         canPressButton = false;
 
         foreach (var item in buttons) {
             item.FadeOut();
         }
-        var pressedCat = GetCurrentDocument().categories[i];
+        var pressedCat = GetCurrentDocument().elements[i];
         Debug.Log($"Match {pressedCat.name} / {zoneCategory.name}");
 
         if ( pressedCat.name == zoneCategory.name) {
@@ -65,7 +65,7 @@ public class DisplayLevel_Deminage : DisplayLevel
             MissionDisplay.instance.DisplayGoodFeedback();
             interactibleElements[i].Lock();
             buttons[i].Lock();
-            if (catsCount == GetCurrentDocument().categories.Count) {
+            if (catsCount == GetCurrentDocument().elements.Count) {
                 ++correctAnswers;
                 // finish
                 targetImage.DOColor(Color.clear, 0.5f);
@@ -83,7 +83,7 @@ public class DisplayLevel_Deminage : DisplayLevel
                 zone.over = false;
             }
 
-        }
+        }*/
 
        
 
@@ -103,14 +103,15 @@ public class DisplayLevel_Deminage : DisplayLevel
     }
 
     IEnumerator ShowButtonsCoroutine() {
+        yield return new WaitForSeconds(0.01f);
 
-        var categories = GetCurrentDocument().categories;
+        /* categories = GetCurrentDocument().elements;
         for (int i = 0; i < categories.Count; i++) {
             
             buttons[i].Display(categories[i].name);
             buttons[i].index = i;
             yield return new WaitForSeconds(0.01f);
-        }
+        }*/
     }
 
 }
