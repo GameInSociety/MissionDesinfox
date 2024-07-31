@@ -6,7 +6,6 @@ using UnityEngine.EventSystems;
 public class SourceButton : Displayable, IPointerClickHandler {
     public DisplayLevel_QuoiCroire.SourceType type;
     public int index;
-
     public GameObject[] groups;
 
     public void Display(int i, DisplayLevel_QuoiCroire.SourceType type) {
@@ -17,12 +16,13 @@ public class SourceButton : Displayable, IPointerClickHandler {
         foreach (GameObject group in groups) {
             group.SetActive(false);
         }
-        groups[i].gameObject.SetActive(true);
+        groups[(int)type].gameObject.SetActive(true);
     }
 
     public void OnPointerClick(PointerEventData eventData) {
         Tween.Bounce(GetTransform);
-
+        string source = DisplayLevel_QuoiCroire.Instance.GetCurrentDocument().sources[index];
+        DisplayLevel_QuoiCroire.Instance.ShowSource(source, type);
 
         Debug.Log($"clicked {type}");
     }

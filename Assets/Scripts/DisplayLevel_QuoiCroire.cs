@@ -72,11 +72,21 @@ public class DisplayLevel_QuoiCroire : DisplayLevel {
             var statement = GetCurrentDocument().statements[index];
             button.GetComponentInChildren<TextMeshProUGUI>().text = statement;
             ++index;
+            button.GetTransform.SetSiblingIndex(Random.Range(0, 4));
+        }
+    }
+
+    public void Submit(int i) {
+        if (i == 0) {
+            ++correctAnswers;
+            MissionDisplay.instance.DisplayGoodFeedback();
+        } else {
+            MissionDisplay.instance.DisplayBadFeedback();
         }
     }
 
     public override void UpdateImage() {
-        base.UpdateImage();
+        //base.UpdateImage();
     }
 
     public void CloseSource() {
@@ -91,6 +101,8 @@ public class DisplayLevel_QuoiCroire : DisplayLevel {
 
         switch (type) {
             case SourceType.Image:
+                source = source.Remove(source.Length - 4);
+                Debug.Log($"iamge source : {source}");
                 string path = $"QC_Sources/{source}";
                 var sprite = Resources.Load<Sprite>(path);
 
