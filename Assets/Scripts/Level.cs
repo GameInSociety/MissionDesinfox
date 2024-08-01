@@ -8,8 +8,8 @@ public class Level
     public enum Type {
         FakeInfo,
         OpVsInfo,
-        Deminage,
-        Bias
+        Biais,
+        QuoiCroire
     }
 
 

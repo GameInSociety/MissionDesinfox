@@ -6,22 +6,24 @@ using UnityEngine;
 [System.Serializable]
 public class Document
 {
+    // general
     public string name = "";
     public string imageName = "";
     public string maskName = "";
-    public string[] statements = new string[4] {
-        "statement 1",
-        "statement 2",
-        "statement 3",
-        "statement 4",
-    };
 
-    public string text = "test text";
-    public string video_path = "video_test";
-    public string audio_path = "audio_test";
 
-    public List<Category> categories = new List<Category>();
+    
+
+    // fnof
     public bool fake = false;
+    public List<string> interactibleElements = new List<string>();
+
+    // quoi croire
+    public List<string> sources = new List<string>();
+    public List<string> statements = new List<string>();
+
+    // LBC & FHO
+    public string correctStatement = "";
 
     public Sprite GetSprite() {
         string path = $"Images/Sources/{imageName}";
@@ -36,11 +38,11 @@ public class Document
     }
 
     public Sprite GetMask() {
-        string path = $"Images/Masks/{imageName}m";
+        string path = $"Images/Masks/{maskName}";
         var sprite = Resources.Load<Sprite>(path);
 
         if (sprite == null) {
-            Debug.LogError($"no texture for document {name} / image : {imageName}");
+            Debug.LogError($"no texture for document {name} / image : {maskName}");
             return null;
         }
 

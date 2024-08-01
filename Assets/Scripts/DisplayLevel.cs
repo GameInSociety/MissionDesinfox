@@ -17,6 +17,13 @@ public class DisplayLevel : Displayable
     private protected bool active = false;
     public int correctAnswers = 0;
 
+    public List<ColorCode> colorCodes = new List<ColorCode>();
+    [System.Serializable]
+    public struct ColorCode {
+        public string hexa;
+        public int index;
+    }
+
     // interactible elements
     public GameObject loading_group;
     public Image mask_image;
@@ -60,12 +67,29 @@ public class DisplayLevel : Displayable
     public virtual void NextDocument() {
         ++documentIndex;
         if ( documentIndex == level.documents.Count) {
+            Debug.Log($"ENDING LEVEL");
             EndLevel();
-            MissionDisplay.instance.ShowScore(timer, correctAnswers, level.documents.Count);
+            Invoke("End2", 1.5f);
+            Invoke("End3", 3f);
+            //MissionDisplay.instance.ShowScore(timer, correctAnswers, level.documents.Count);
             return;
         }
 
         UpdateCurrentDocument();
+    }
+
+    public void EndLevel() {
+        active = false;
+        FadeOut();
+        
+    }
+    void End2() {
+        DisplayDialogue.Instance.Display("Fini !");
+
+    }
+    void End3() {
+        MissionDisplay.instance.FadeOut();
+        SelectionMenu.Instance.FadeIn();
     }
 
     public virtual void UpdateCurrentDocument() {
@@ -79,19 +103,19 @@ public class DisplayLevel : Displayable
         targetImage.sprite = GetCurrentDocument().GetSprite(); ;
         targetImage.SetNativeSize();
 
-        if ( mask_image != null ) {
+        if ( !string.IsNullOrEmpty(GetCurrentDocument().maskName)) {
+            Debug.Log($"creating mask : {GetCurrentDocument().maskName}");
+            mask_image.enabled = true;
             mask_image.sprite = GetCurrentDocument().GetMask();
             mask_image.SetNativeSize();
 
             StartCoroutine(CreateInteractibleElements());
+        } else {
+            mask_image.enabled = false;
         }
     }
 
 
-    public virtual void EndLevel() {
-        FadeOut();
-        active = false;
-    }
 
     #region interactible elements
     IEnumerator CreateInteractibleElements() {
@@ -118,6 +142,7 @@ public class DisplayLevel : Displayable
                 if (color.a < 0.1f)
                     continue;
 
+
                 // find matching pixel group
                 var pixelGroup = pixelGroups.Find(x => x.color == color);
                 if (pixelGroup == null) {
@@ -125,6 +150,9 @@ public class DisplayLevel : Displayable
                     pixelGroup = new PixelGroup();
                     pixelGroup.start = new Vector2(x, y);
                     pixelGroup.color = color;
+                    string colorCode = UnityEngine.ColorUtility.ToHtmlStringRGB(color);
+                    Debug.Log($"{UnityEngine.ColorUtility.ToHtmlStringRGB(color)}");
+                    pixelGroup.hexa = colorCode;
                     pixelGroups.Add(pixelGroup);
                 }
 
@@ -151,9 +179,9 @@ public class DisplayLevel : Displayable
 
         // create & place all elements
         int index = 0;
-        foreach (var item in pixelGroups) {
+        foreach (var pixelGroup in pixelGroups) {
 
-            if (index >= GetCurrentDocument().categories.Count)
+            if (index >= GetCurrentDocument().interactibleElements.Count)
                 break;
 
             // instantiate 
@@ -162,12 +190,16 @@ public class DisplayLevel : Displayable
                 interactibleElements.Add(dz);
             }
 
-            Vector2 pos = item.start;
+            Vector2 pos = pixelGroup.start;
 
             interactibleElements[index].gameObject.SetActive(true);
-            interactibleElements[index].GetComponent<RectTransform>().sizeDelta = new Vector2(item.end.x - item.start.x, item.end.y - item.start.y); ;
-            interactibleElements[index].GetComponent<RectTransform>().anchoredPosition = item.start;
-            interactibleElements[index].Display(index, GetCurrentDocument().categories[index], item.color);
+            interactibleElements[index].GetComponent<RectTransform>().sizeDelta = new Vector2(pixelGroup.end.x - pixelGroup.start.x, pixelGroup.end.y - pixelGroup.start.y); ;
+            interactibleElements[index].GetComponent<RectTransform>().anchoredPosition = pixelGroup.start;
+
+            int codeIndex = colorCodes.Find(x=> x.hexa == pixelGroup.hexa ).index;
+            Debug.Log($"index found : {codeIndex}");
+
+            interactibleElements[index].Display(index, GetCurrentDocument().interactibleElements[codeIndex], pixelGroup.color);
 
             index++;
             yield return new WaitForEndOfFrame();
