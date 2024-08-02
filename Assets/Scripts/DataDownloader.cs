@@ -72,10 +72,12 @@ public class DataDownloader : MonoBehaviour {
         var textAssets = Resources.LoadAll<TextAsset>(path);
 
         yield return null;
-        for (var sheetIndex = 0; sheetIndex < sheetNames.Length; sheetIndex++) {
+        for (var i = 0; i < sheetNames.Length; i++) {
+            sheetIndex = i;
             var editIndex = url.IndexOf("edit");
             if (editIndex != -1) {
                 var tmpUrl = url.Remove(editIndex) + linkReplace + sheetNames[sheetIndex];
+                Debug.Log($"{tmpUrl}");
                 Debug.Log("(" + sheetIndex + "/" + sheetNames.Length + ")" + " Fetching " + sheetNames[sheetIndex] + "...");
                 yield return DownloadCSV(tmpUrl, sheetNames[sheetIndex]);
             } else {
@@ -89,16 +91,6 @@ public class DataDownloader : MonoBehaviour {
 
 
     }
-
-    public IEnumerator DownloadsCSV(string sheetName) {
-        int index = System.Array.FindIndex(sheetNames, x=> x == sheetName);
-        yield return DownloadsCSV(index);
-#if UNITY_EDITOR
-        AssetDatabase.Refresh();
-        Debug.Log($"Importing {sheetName}");
-#endif
-    }
-
     public IEnumerator DownloadsCSV(int sheetIndex) {
         yield return null;
 

@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Video;
 
 public class DisplayLevel_QuoiCroire : DisplayLevel {
@@ -50,7 +51,7 @@ public class DisplayLevel_QuoiCroire : DisplayLevel {
             } else if (source.EndsWith(".mp3")) {
                 // audio
                 sourceType = SourceType.Audio;
-            } else if (source.EndsWith(".mp3")) {
+            } else if (source.EndsWith(".mp4")) {
                 // video
                 sourceType = SourceType.Video;
             } else {
@@ -79,9 +80,9 @@ public class DisplayLevel_QuoiCroire : DisplayLevel {
     public void Submit(int i) {
         if (i == 0) {
             ++correctAnswers;
-            MissionDisplay.instance.DisplayGoodFeedback();
+            MissionDisplay.instance.Document_Sucess();
         } else {
-            MissionDisplay.instance.DisplayBadFeedback();
+            MissionDisplay.instance.Document_Fail();
         }
     }
 
@@ -94,6 +95,14 @@ public class DisplayLevel_QuoiCroire : DisplayLevel {
         audioSource.Stop();
     }
 
+    public Slider slider;
+    Vector2 initscale;
+
+    public override void Update() {
+        base.Update();
+
+        targetImage.rectTransform.sizeDelta = Vector2.Lerp(initscale/2f, initscale *2f, slider.value);
+    }
     public void ShowSource(string source, SourceType type) {
 
         source_Displayables[(int)type].FadeIn();
@@ -106,12 +115,15 @@ public class DisplayLevel_QuoiCroire : DisplayLevel {
                 string path = $"QC_Sources/{source}";
                 var sprite = Resources.Load<Sprite>(path);
 
+
                 if (sprite == null) {
                     Debug.LogError($"no texture for document {name} / QC image : {source}");
                     return;
                 }
 
                 targetImage.sprite = sprite;
+                targetImage.SetNativeSize();
+                initscale = targetImage.rectTransform.sizeDelta;
                 break;
             case SourceType.Text:
                 uiText.text = source;
@@ -128,6 +140,7 @@ public class DisplayLevel_QuoiCroire : DisplayLevel {
     }
 
     void playAudio(string source) {
+                source = source.Remove(source.Length - 4);
         string path = $"QC_Sources/{source}";
         Debug.Log(path);
         var clip = Resources.Load<AudioClip>(path);
@@ -139,6 +152,7 @@ public class DisplayLevel_QuoiCroire : DisplayLevel {
     }
 
     void playVideo(string source) {
+                source = source.Remove(source.Length - 4);
         string path = $"QC_Sources/{source}";
         Debug.Log(path);
         var clip = Resources.Load<VideoClip>(path);

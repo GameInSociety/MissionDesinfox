@@ -23,9 +23,9 @@ public class DisplayLevel_FakeInfo : DisplayLevel
     public void PressInfo() {
         if (!GetCurrentDocument().fake) {
             ++correctAnswers;
-            MissionDisplay.instance.DisplayGoodFeedback();
+            MissionDisplay.instance.Document_Sucess();
         } else {
-            MissionDisplay.instance.DisplayBadFeedback();
+            MissionDisplay.instance.Document_Fail();
 
         }
 
@@ -36,15 +36,14 @@ public class DisplayLevel_FakeInfo : DisplayLevel
     public void Press() {
         targetImage.DOColor(Color.clear, 0.5f);
         canPress = false;
-        Invoke("NextDocument", 1f);
     }
 
     public void PressFake() {
         if (GetCurrentDocument().fake) {
             ++correctAnswers;
-            MissionDisplay.instance.DisplayGoodFeedback();
+            MissionDisplay.instance.Document_Sucess();
         } else {
-            MissionDisplay.instance.DisplayBadFeedback();
+            MissionDisplay.instance.Document_Fail();
         }
 
         button_Info.FadeOut();

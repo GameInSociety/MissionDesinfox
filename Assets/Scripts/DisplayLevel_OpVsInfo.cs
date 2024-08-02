@@ -30,15 +30,13 @@ public class DisplayLevel_OpVsInfo : DisplayLevel
 
         if (chosenAnswer == correctAnswer) {
             ++correctAnswers;
-            MissionDisplay.instance.DisplayGoodFeedback();
+            MissionDisplay.instance.Document_Sucess();
         } else {
-            MissionDisplay.instance.DisplayBadFeedback();
+            MissionDisplay.instance.Document_Fail();
         }
 
 
         targetImage.DOColor(Color.clear, 0.5f);
-
-        Invoke("NextDocument", 1f);
     }
 
     public override void UpdateCurrentDocument() {

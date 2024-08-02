@@ -16,17 +16,5 @@ public class LevelManager : MonoBehaviour
         Instance = this;
     }
 
-    private void Update() {
-        if ( Input.GetKeyDown(KeyCode.L))
-        {
-            var texture = Resources.Load(path) as Texture2D;
-            image.sprite = Sprite.Create(texture, new Rect (0f, 0f, texture.width, texture.height), Vector2.zero);
-            if (texture != null) {
-                Debug.Log($"found:{path} {texture.GetType().Name}");
-            } else {
-                Debug.Log($"not found:{path}");
-            }
-        }
-    }
 
 }

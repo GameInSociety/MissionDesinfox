@@ -10,8 +10,8 @@ public class Document
     public string name = "";
     public string imageName = "";
     public string maskName = "";
-
-
+    public string clue = "";
+    public string explanation = "";
     
 
     // fnof

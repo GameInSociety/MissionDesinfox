@@ -84,7 +84,7 @@ public class DisplayLevel : Displayable
         
     }
     void End2() {
-        DisplayDialogue.Instance.Display("Fini !");
+        DisplayDialogue.Instance.Display($"Le niveau est fini !");
 
     }
     void End3() {

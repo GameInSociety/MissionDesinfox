@@ -15,31 +15,30 @@ public class DisplayDialogue : Displayable, IPointerClickHandler {
 
     bool displayed = false;
 
+    public delegate void OnClose();
+    public OnClose onClose;
+
     private void Awake() {
         Instance = this;
-    }
-
-    private void Update() {
-        if ( displayed ) {
-            timer -= Time.deltaTime;
-            if (timer <= 0f) {
-                displayed = false;
-                FadeOut();
-            }
-        }
-
     }
 
     public void Display(string text) {
         FadeIn();
         Tween.Bounce(transform);
         uiText.text = text;
-        timer = 2f;
         displayed = true;
     }
 
     public void OnPointerClick(PointerEventData eventData) {
-        transform.DOScale(0f, 1f).SetEase(Ease.InBounce);
+        Close();
+    }
+
+    public void Close() {
+        displayed = false;
         FadeOut();
+        if (onClose != null) {
+            onClose();
+            onClose = null;
+        }
     }
 }

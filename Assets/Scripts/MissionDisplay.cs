@@ -10,6 +10,8 @@ public class MissionDisplay : Displayable
 
     public DisplayLevel[] displayLevels;
 
+    public DisplayLevel currentLevel;
+
     public Displayable score_Displayable;
 
     public TextMeshProUGUI correctResponses_Text;
@@ -47,6 +49,7 @@ public class MissionDisplay : Displayable
         FadeIn();
 
         Level level = LevelManager.Instance.currentLevel;
+        currentLevel = displayLevels[(int)level.type];
         displayLevels[(int)level.type].StartLevel();
         lives_Outline.color = lives_Colors[(int)level.type];
 
@@ -69,29 +72,32 @@ public class MissionDisplay : Displayable
         displayScore.UpdateScore(score);
     }
 
-    public void DisplayGoodFeedback() {
+    public void Document_Sucess() {
 
-        DisplayDialogue.Instance.Display("C'est ça !");
+        DisplayDialogue.Instance.Display($"Bravo !\n{currentLevel.GetCurrentDocument().explanation}");
 
         goodFeedback_Obj.SetActive(true);
 
         UpdateCharacter();
+        DisplayDialogue.Instance.onClose += currentLevel.NextDocument;
 
 
     }
-
-
-
-    public void Help() {
-        DisplayDialogue.Instance.Display("Besoin d'aide ?");
-    }
-    public void DisplayBadFeedback() {
-        DisplayDialogue.Instance.Display("Raté !");
+    public void Document_Fail() {
+        DisplayDialogue.Instance.Display($"Raté !\n{currentLevel.GetCurrentDocument().explanation}");
         badFeedback_Obj.SetActive(true);
         --lives;
 
-        UpdateCharacter();   
+        UpdateCharacter();
+
+        DisplayDialogue.Instance.onClose += currentLevel.NextDocument;
     }
+
+
+    public void Help() {
+        DisplayDialogue.Instance.Display(currentLevel.GetCurrentDocument().clue);
+    }
+    
 
     void UpdateCharacter() {
         for (int j = 0; j < lives_Images.Length; j++) {

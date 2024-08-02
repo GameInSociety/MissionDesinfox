@@ -15,8 +15,12 @@ public class DB_Loader : DataDownloader
     public override void GetCell(int rowIndex, List<string> cells) {
         base.GetCell(rowIndex, cells);
 
+        Debug.Log($"sheet index : {sheetName}");
         if (rowIndex < 2)
             return;
+        if ( sheetIndex >= 4 ) {
+            return;
+        }
 
         if (!string.IsNullOrEmpty(cells[0])) {
             lineIndex = 0;
@@ -35,14 +39,21 @@ public class DB_Loader : DataDownloader
                     lastDocument.fake = !string.IsNullOrEmpty(cells[3]);
                 }
                 lastDocument.interactibleElements.Add(cells[4]);
+                lastDocument.explanation = cells[7];
                 break;
             // HVSOP
             case 1:
                 lastDocument.correctStatement = cells[2];
+                lastDocument.clue = cells[3];
+                lastDocument.explanation = cells[4];
                 break;
+                // biais
             case 2:
                 lastDocument.correctStatement = cells[2];
+                lastDocument.clue = cells[3];
+                lastDocument.explanation = cells[4];
                 break;
+                // quoi croire
             case 3:
                 for (int i = 0;i < 4; ++i) {
                     if ( lineIndex == 0)
@@ -50,6 +61,7 @@ public class DB_Loader : DataDownloader
                     else
                         lastDocument.statements.Add(cells[i+1]);
                 }
+                lastDocument.explanation = cells[5];
                 break;
             default:
                 break;
