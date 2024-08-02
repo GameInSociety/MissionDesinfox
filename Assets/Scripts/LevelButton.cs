@@ -26,8 +26,8 @@ public class LevelButton : MonoBehaviour, IPointerClickHandler {
         LevelManager.Instance.currentLevel = level;
         SelectionMenu.Instance.FadeOut();
         MissionIntroDisplay.Instance.FadeIn();
+        MissionIntroDisplay.Instance.title_text.text = $"{level.name}";
         MissionIntroDisplay.Instance.description_text.text = $"{level.description}";
-        MissionIntroDisplay.Instance.UpdateUI();
 
     }
 

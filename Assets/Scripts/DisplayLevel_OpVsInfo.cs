@@ -1,50 +1,58 @@
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class DisplayLevel_OpVsInfo : DisplayLevel
 {
-    public static DisplayLevel_OpVsInfo Instance;
-
-    private void Awake() {
-        Instance = this;
-    }
-
     public Image[] images;
 
     public int correctImage = 0;
 
     bool canInteract = false;
-    public List<BiasButton> buttons = new List<BiasButton>();
 
 
-    public void PressButton(int index) {
+    public void PressImage(int index) {
+        if (!canInteract) {
+            return;
+        }
 
-        string correctAnswer = GetCurrentDocument().correctStatement.ToLower();
-        string chosenAnswer = buttons[index].GetComponentInChildren<TextMeshProUGUI>().text.ToLower();
-        Debug.Log($"correct answer : {correctAnswer}");
-        Debug.Log($"chosen answer : {chosenAnswer}");
-
-        if (chosenAnswer == correctAnswer) {
+        if ( correctImage == index) {
             ++correctAnswers;
             MissionDisplay.instance.DisplayGoodFeedback();
         } else {
             MissionDisplay.instance.DisplayBadFeedback();
         }
 
+        Invoke($"NextDocument", 2f);
+        Debug.Log($"Press {index}");
+        canInteract = false;
 
-        targetImage.DOColor(Color.clear, 0.5f);
+        for (int i = 0; i < images.Length; i++) {
+            if ( i == index)
+                images[i].DOColor(Color.clear, 0.5f).SetDelay(1f);
+            else
+                images[i].DOColor(Color.clear, 0.5f);
 
-        Invoke("NextDocument", 1f);
+        }
     }
 
     public override void UpdateCurrentDocument() {
         base.UpdateCurrentDocument();
+        canInteract = true;
+        foreach (var item in images) {
+            item.DOColor(Color.white, 0.5f);
+        }
+    }
 
-        targetImage.DOColor(Color.white, 0.5f);
+    public override void UpdateImage() {
+        //base.UpdateImage();
+        var sprite = GetCurrentDocument().GetSprite();
+        
+        foreach ( var item in images ) {
+            item.sprite = sprite;
+        }
     }
 
 }

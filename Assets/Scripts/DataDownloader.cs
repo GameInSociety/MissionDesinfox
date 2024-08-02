@@ -12,7 +12,6 @@ public class DataDownloader : MonoBehaviour {
     public string[] sheetNames;
 
     public string sheetName;
-    public int sheetIndex;
     public int row;
     public int col;
     public string SheetToLoad = "";
@@ -31,7 +30,7 @@ public class DataDownloader : MonoBehaviour {
 
         for (int i = 0; i < sheetNames.Length; ++i) {
             var sheet = sheetNames[i];
-            sheetIndex = i;
+
             if ( !string.IsNullOrEmpty( sheetToLoad) && sheet != sheetToLoad ) { continue; }
 
             var text = "";

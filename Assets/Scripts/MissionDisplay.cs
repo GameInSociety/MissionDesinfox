@@ -10,6 +10,8 @@ public class MissionDisplay : Displayable
 
     public DisplayLevel[] displayLevels;
 
+    public TextMeshProUGUI title_text;
+
     public Displayable score_Displayable;
 
     public TextMeshProUGUI correctResponses_Text;
@@ -21,19 +23,14 @@ public class MissionDisplay : Displayable
 
     public Sprite[] character_Sprites;
 
-
     public Image character_Image;
     public RectTransform character_RectTransform;
 
-    /// <summary>
-    /// LIVES
-    /// </summary>
-    public Color[] lives_Colors;
-    public Image lives_Outline;
     public Image[] lives_Images;
-    public int lives = 5;
+    public Sprite lives_empty;
+    public Sprite lives_full;
 
-    public int maxLives = 5;
+    public int lives = 3;
 
     private void Awake() {
         instance = this;
@@ -48,11 +45,12 @@ public class MissionDisplay : Displayable
 
         Level level = LevelManager.Instance.currentLevel;
         displayLevels[(int)level.type].StartLevel();
-        lives_Outline.color = lives_Colors[(int)level.type];
 
-        lives = maxLives;
+        lives = 3;
 
         UpdateCharacter();
+
+        title_text.text = level.name;
     }
 
     public void ShowScore(float time, int correctAnsers, int totalAnswers) {
@@ -95,11 +93,11 @@ public class MissionDisplay : Displayable
 
     void UpdateCharacter() {
         for (int j = 0; j < lives_Images.Length; j++) {
-            lives_Images[j].color = lives > j ? Color.white : Color.clear;
+            lives_Images[j].color = lives > j ? Color.white : Color.black;
         }
         Tween.Bounce(character_RectTransform);
         int i = Mathf.Clamp(lives, 0, 5);
-        character_Image.sprite = character_Sprites[5-i];
+        character_Image.sprite = character_Sprites[i];
     }
 
     public void ExitLevel() {

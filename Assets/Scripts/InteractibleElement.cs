@@ -21,8 +21,6 @@ public class InteractibleElement : MonoBehaviour, IPointerEnterHandler, IPointer
 
     public static bool canPressZone = true;
 
-    public string text;
-
     public int index;
 
     // Start is called before the first frame update
@@ -33,10 +31,9 @@ public class InteractibleElement : MonoBehaviour, IPointerEnterHandler, IPointer
     }
 
 
-    public void Display(int i, string _text, Color c) {
+    public void Display(int i, Category cateogry, Color c) {
         gameObject.SetActive(true);
         locked = false;
-        text = _text;
         over = false;
         index = i;
         initcolor = c;
@@ -90,6 +87,6 @@ public class InteractibleElement : MonoBehaviour, IPointerEnterHandler, IPointer
             return;
         }
         Tween.Bounce(transform);
-        DisplayDialogue.Instance.Display(text);
+        DisplayMessage.Instance.Display("Test Element Info");
     }
 }

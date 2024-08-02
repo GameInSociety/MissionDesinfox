@@ -13,12 +13,16 @@ public class DisplayLevel_FakeInfo : DisplayLevel
 
     public override void StartLevel() {
         base.StartLevel();
+
+        button_Fake.Hide();
+        button_Info.Hide();
     }
 
     public override void UpdateCurrentDocument() {
         base.UpdateCurrentDocument();
         button_Fake.FadeIn();
         button_Info.FadeIn();
+        Invoke("Delay", 0f);
     }
     public void PressInfo() {
         if (!GetCurrentDocument().fake) {

@@ -19,10 +19,6 @@ public class BiasButton : Displayable, IPointerClickHandler {
     public void OnPointerClick(PointerEventData eventData) {
         FadeIn();
         Tween.Bounce(GetTransform);
-        if (LevelManager.Instance.currentLevel.type == Level.Type.OpVsInfo) {
-            DisplayLevel_OpVsInfo.Instance.PressButton(index);
-        } else {
-            DisplayLevel_Bias.Instance.PressButton(index);
-        }
+        DisplayLevel_Bias.Instance.PressButton(index);
     }
 }
