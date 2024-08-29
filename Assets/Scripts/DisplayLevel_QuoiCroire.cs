@@ -12,6 +12,10 @@ public class DisplayLevel_QuoiCroire : DisplayLevel {
     public AudioSource audioSource;
     public TextMeshProUGUI uiText;
 
+    int correctIndex = 0;
+
+    bool canPress = false;
+
     public enum SourceType {
         Image,
         Text,
@@ -37,29 +41,19 @@ public class DisplayLevel_QuoiCroire : DisplayLevel {
             button.Hide();
         }
 
+        canPress = true;
+
         base.UpdateCurrentDocument();
 
-        for (int i = 0; i < doc.sources.Count; i++) {
+        for (int i = 0; i < doc.types.Count; i++) {
 
             // get source type 
-            var source = doc.sources[i];
-            var sourceType = (SourceType)i;
+            var url = doc.medias[i];
+            string type = doc.types[i].ToLower();
 
-            if (source.EndsWith(".png")) {
-                // image
-                sourceType = SourceType.Image;
-            } else if (source.EndsWith(".mp3")) {
-                // audio
-                sourceType = SourceType.Audio;
-            } else if (source.EndsWith(".mp4")) {
-                // video
-                sourceType = SourceType.Video;
-            } else {
-                // text
-                sourceType = SourceType.Text;
-            }
+            Debug.Log($"type : {doc.types[i]} / media : {url}");
 
-            sourceButtons[i].Display(i, sourceType);
+            sourceButtons[i].Display(type, url);
         }
 
 
@@ -71,6 +65,10 @@ public class DisplayLevel_QuoiCroire : DisplayLevel {
         foreach (var button in statement_Buttons) {
             button.FadeIn();
             var statement = GetCurrentDocument().statements[index];
+            if ( statement.StartsWith("(TARGET) ")) {
+                correctIndex = index;
+                statement = statement.Remove(0, "(TARGET) ".Length);
+            }
             button.GetComponentInChildren<TextMeshProUGUI>().text = statement;
             ++index;
             button.GetTransform.SetSiblingIndex(Random.Range(0, 4));
@@ -78,15 +76,29 @@ public class DisplayLevel_QuoiCroire : DisplayLevel {
     }
 
     public void Submit(int i) {
-        if (i == 0) {
+
+        if (!canPress) {
+            return;
+        }
+
+        if (i == correctIndex) {
             ++correctAnswers;
             MissionDisplay.instance.Document_Sucess();
         } else {
             MissionDisplay.instance.Document_Fail();
         }
+        foreach (var source in source_Displayables) {
+            source.FadeOut();
+        }
+        foreach (var button in sourceButtons) {
+            button.FadeOut();
+        }
+
+        canPress = false;
+
     }
 
-    public override void UpdateImage() {
+    public override void LoadMedia() {
         //base.UpdateImage();
     }
 
@@ -95,52 +107,12 @@ public class DisplayLevel_QuoiCroire : DisplayLevel {
         audioSource.Stop();
     }
 
-    public Slider slider;
-    Vector2 initscale;
-
     public override void Update() {
         base.Update();
 
-        targetImage.rectTransform.sizeDelta = Vector2.Lerp(initscale/2f, initscale *2f, slider.value);
-    }
-    public void ShowSource(string source, SourceType type) {
-
-        source_Displayables[(int)type].FadeIn();
-        Debug.Log($"showing source : {source} for type {type}");
-
-        switch (type) {
-            case SourceType.Image:
-                source = source.Remove(source.Length - 4);
-                Debug.Log($"iamge source : {source}");
-                string path = $"QC_Sources/{source}";
-                var sprite = Resources.Load<Sprite>(path);
-
-
-                if (sprite == null) {
-                    Debug.LogError($"no texture for document {name} / QC image : {source}");
-                    return;
-                }
-
-                targetImage.sprite = sprite;
-                targetImage.SetNativeSize();
-                initscale = targetImage.rectTransform.sizeDelta;
-                break;
-            case SourceType.Text:
-                uiText.text = source;
-                break;
-            case SourceType.Audio:
-                playAudio(source);
-                break;
-            case SourceType.Video:
-                playVideo(source);
-                break;
-            default:
-                break;
-        }
     }
 
     void playAudio(string source) {
-                source = source.Remove(source.Length - 4);
         string path = $"QC_Sources/{source}";
         Debug.Log(path);
         var clip = Resources.Load<AudioClip>(path);
@@ -152,7 +124,6 @@ public class DisplayLevel_QuoiCroire : DisplayLevel {
     }
 
     void playVideo(string source) {
-                source = source.Remove(source.Length - 4);
         string path = $"QC_Sources/{source}";
         Debug.Log(path);
         var clip = Resources.Load<VideoClip>(path);

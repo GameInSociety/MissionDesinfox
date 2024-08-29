@@ -1,28 +1,41 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class SourceButton : Displayable, IPointerClickHandler {
-    public DisplayLevel_QuoiCroire.SourceType type;
+    public string type;
+    public string url;
     public int index;
     public GameObject[] groups;
 
-    public void Display(int i, DisplayLevel_QuoiCroire.SourceType type) {
-        this.type = type;
-        index = i;
+    public void Display(string type, string url) {
+        this.type = type.ToLower();
+        this.url = url;
+        
         FadeIn();
-
-        foreach (GameObject group in groups) {
+        foreach (GameObject group in groups)
             group.SetActive(false);
+
+        switch (type) {
+            case "image":
+                groups[0].SetActive(true);
+                break;
+            case "video":
+                groups[3].SetActive(true);
+                break;
+            case "audio":
+                groups[2].SetActive(true);
+                break;
+            case "text":
+                groups[1].SetActive(true);
+                break;
+            default:
+                break;
         }
-        groups[(int)type].gameObject.SetActive(true);
     }
 
     public void OnPointerClick(PointerEventData eventData) {
         Tween.Bounce(GetTransform);
-        string source = DisplayLevel_QuoiCroire.Instance.GetCurrentDocument().sources[index];
-        DisplayLevel_QuoiCroire.Instance.ShowSource(source, type);
+        DisplayMedia.Instance.LoadMedia(type, url, true);
 
         Debug.Log($"clicked {type}");
     }

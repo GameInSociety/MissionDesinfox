@@ -1,21 +1,28 @@
-using Newtonsoft.Json;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using JetBrains.Annotations;
 
 public class MissionIntroDisplay : Displayable
 {
     public static MissionIntroDisplay Instance;
 
+    public List<string> missionIntroductions = new List<string>();
+    public string gameIntroduction;
+    public string gameConclusion;
+
     public Sprite[] bg_sprites;
     public Sprite[] rect_sprites;
     public Sprite[] title_sprites;
+    public Sprite[] play_sprites;
 
     public Image bg_image;
     public Image rect_image;
     public Image title_image;
+    public Image play_image;
+
+    public ScrollRect scrollRect;
 
     public TextMeshProUGUI title_text;
     public TextMeshProUGUI description_text;
@@ -32,6 +39,11 @@ public class MissionIntroDisplay : Displayable
         bg_image.sprite = bg_sprites[i];
         rect_image.sprite = rect_sprites[i];
         title_image.sprite = title_sprites[i];
+        play_image.sprite = play_sprites[i];
+
+        scrollRect.verticalNormalizedPosition = 0f;
+
+        description_text.text = missionIntroductions[i];
     }
 
     public void StartMission() {

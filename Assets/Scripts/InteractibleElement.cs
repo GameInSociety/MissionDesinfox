@@ -1,12 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.TerrainUtils;
 using UnityEngine.UI;
 
 public class InteractibleElement : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler {
     public Image image;
-    Color initcolor = Color.white;
 
     public float colorSpeed = 1f;
 
@@ -15,10 +13,6 @@ public class InteractibleElement : MonoBehaviour, IPointerEnterHandler, IPointer
     public bool over = false;
 
     public bool locked = false;
-
-    public Sprite idle_Sprite;
-    public Sprite locked_Sprite;
-
     public static bool canPressZone = true;
 
     public string text;
@@ -39,16 +33,12 @@ public class InteractibleElement : MonoBehaviour, IPointerEnterHandler, IPointer
         text = _text;
         over = false;
         index = i;
-        initcolor = c;
         image.color = Color.clear;
-        image.sprite = idle_Sprite;
     }
 
     public void Lock() {
         locked = true;
         over = true;
-        image.sprite = locked_Sprite;
-        initcolor = Color.black;
     }
 
 
@@ -56,11 +46,10 @@ public class InteractibleElement : MonoBehaviour, IPointerEnterHandler, IPointer
     void Update()
     {
         if ( locked) {
-            image.color = Color.Lerp(image.color, initcolor, colorSpeed * Time.deltaTime);
             return;
         }
         if (over ) {
-            image.color = Color.Lerp(image.color, initcolor, colorSpeed * Time.deltaTime);
+            image.color = Color.Lerp(image.color, Color.cyan, colorSpeed * Time.deltaTime);
         } else {
             image.color = Color.Lerp(image.color, Color.clear, colorSpeed * Time.deltaTime);
         }

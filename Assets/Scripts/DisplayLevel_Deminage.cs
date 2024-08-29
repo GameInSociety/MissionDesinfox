@@ -1,14 +1,5 @@
-using DG.Tweening;
-using DG.Tweening.Core.Easing;
-using JetBrains.Annotations;
-using Mono.Cecil.Cil;
 using System.Collections;
-using System.Collections.Generic;
-using TMPro;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Jobs;
-using UnityEngine.UI;
 
 public class DisplayLevel_Deminage : DisplayLevel
 {

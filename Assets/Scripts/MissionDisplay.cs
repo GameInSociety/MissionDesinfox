@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,14 +11,20 @@ public class MissionDisplay : Displayable
 
     public DisplayLevel currentLevel;
 
+    /// <summary>
+    /// SCORE
+    /// </summary>
     public Displayable score_Displayable;
-
+    public Image scoreBg_Image;
+    public Sprite[] scoreBg_Sprites;
+    public Image medal_Image;
+    public Sprite[] medal_Sprites;
     public TextMeshProUGUI correctResponses_Text;
     public TextMeshProUGUI timeSpent_text;
+    public TextMeshProUGUI[] uiTexts;
 
     public GameObject goodFeedback_Obj;
     public GameObject badFeedback_Obj;
-    public DisplayScore displayScore;
 
     public Sprite[] character_Sprites;
 
@@ -47,6 +52,7 @@ public class MissionDisplay : Displayable
             displayLevel.Hide();
         }
         FadeIn();
+        score_Displayable.Hide();
 
         Level level = LevelManager.Instance.currentLevel;
         currentLevel = displayLevels[(int)level.type];
@@ -60,6 +66,14 @@ public class MissionDisplay : Displayable
 
     public void ShowScore(float time, int correctAnsers, int totalAnswers) {
         score_Displayable.FadeIn();
+        Level level = LevelManager.Instance.currentLevel;
+
+        foreach (var uiText in uiTexts) {
+            uiText.color = lives_Colors[(int)level.type];
+        }
+
+        scoreBg_Image.sprite = scoreBg_Sprites[(int)level.type];
+
 
         int time_i = Mathf.RoundToInt(time);
         timeSpent_text.text = $"{time_i} secondes";
@@ -68,33 +82,45 @@ public class MissionDisplay : Displayable
 
         float lerp = (float)correctAnsers / totalAnswers;
         int score = (int)lerp * 3;
-        Debug.Log(score);
-        displayScore.UpdateScore(score);
+        Debug.Log($"medal : {score}");
+        Debug.Log($"time : {time_i}");
+        score = Mathf.Clamp(score, 0, 2);
+        medal_Image.sprite = medal_Sprites[score];
     }
 
     public void Document_Sucess() {
-
-        DisplayDialogue.Instance.Display($"Bravo !\n{currentLevel.GetCurrentDocument().explanation}");
-
+        DisplayMessage.Instance.FadeOut();
         goodFeedback_Obj.SetActive(true);
-
         UpdateCharacter();
-        DisplayDialogue.Instance.onClose += currentLevel.NextDocument;
+        DisplayMedia.Instance.Reset();
 
-
+        Invoke("Document_SucessDelay", 1.5f);
     }
+
+    void Document_SucessDelay() {
+        DisplayDialogue.Instance.Display($"Bravo !\n{currentLevel.GetCurrentDocument().explanation}");
+        DisplayDialogue.Instance.onClose += currentLevel.NextDocument;
+    }
+
     public void Document_Fail() {
-        DisplayDialogue.Instance.Display($"Raté !\n{currentLevel.GetCurrentDocument().explanation}");
+        DisplayMessage.Instance.FadeOut();
+        DisplayMedia.Instance.Reset();
         badFeedback_Obj.SetActive(true);
         --lives;
 
         UpdateCharacter();
+        Invoke("Document_FailDelay", 1.5f);
+    }
 
+    void Document_FailDelay() {
+        DisplayDialogue.Instance.Display($"Raté !\n{currentLevel.GetCurrentDocument().explanation}");
         DisplayDialogue.Instance.onClose += currentLevel.NextDocument;
     }
 
 
     public void Help() {
+        if (string.IsNullOrEmpty(currentLevel.GetCurrentDocument().clue))
+            return;
         DisplayDialogue.Instance.Display(currentLevel.GetCurrentDocument().clue);
     }
     
@@ -112,6 +138,21 @@ public class MissionDisplay : Displayable
         Level level = LevelManager.Instance.currentLevel;
         displayLevels[(int)level.type].EndLevel();
         FadeOut();
+        score_Displayable.Hide();
         SelectionMenu.Instance.FadeIn();
+        if (score_Displayable.state == State.visible)
+            score_Displayable.FadeOut();
+
+        foreach (var lvl in LevelManager.Instance.levels) {
+            if (!lvl.finished) {
+                return;
+            }
+        }
+
+
+        DisplayMessage.Instance.Display(MissionIntroDisplay.Instance.gameConclusion);
+
     }
+
+
 }

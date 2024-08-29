@@ -1,10 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 using TMPro;
 using UnityEngine.EventSystems;
-using Unity.VisualScripting;
 
 public class LevelButton : MonoBehaviour, IPointerClickHandler {
     public GameObject locked_group;

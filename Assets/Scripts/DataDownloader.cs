@@ -1,10 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.Rendering;
 
 public class DataDownloader : MonoBehaviour {
     public string linkReplace = "gviz/tq?tqx=out:csv&sheet=";
@@ -23,6 +21,9 @@ public class DataDownloader : MonoBehaviour {
     public string path = @"F:\Unity Projects\Rogue Text\Assets\Resources\Items\";
 
     public int lineAmount = 0;
+
+    public delegate void OnFinishedLoading();
+    public OnFinishedLoading onDownloadFinish;
 
 
     public string sheetToLoad;
@@ -62,8 +63,6 @@ public class DataDownloader : MonoBehaviour {
     }
     #endregion
 
-
-
     public void DownloadCSVs() {
         _ = StartCoroutine(DownloadsCSVs());
     }
@@ -77,8 +76,6 @@ public class DataDownloader : MonoBehaviour {
             var editIndex = url.IndexOf("edit");
             if (editIndex != -1) {
                 var tmpUrl = url.Remove(editIndex) + linkReplace + sheetNames[sheetIndex];
-                Debug.Log($"{tmpUrl}");
-                Debug.Log("(" + sheetIndex + "/" + sheetNames.Length + ")" + " Fetching " + sheetNames[sheetIndex] + "...");
                 yield return DownloadCSV(tmpUrl, sheetNames[sheetIndex]);
             } else {
                 Debug.LogError("no index for edit in link " + url);
@@ -86,9 +83,11 @@ public class DataDownloader : MonoBehaviour {
         }
 #if UNITY_EDITOR
         AssetDatabase.Refresh();
-        Debug.Log($"Importing {sheetName}");
+        Debug.Log($"Finished Downloading & Importing {sheetName}");
 #endif
-
+        if (onDownloadFinish != null) {
+            onDownloadFinish();
+        }
 
     }
     public IEnumerator DownloadsCSV(int sheetIndex) {

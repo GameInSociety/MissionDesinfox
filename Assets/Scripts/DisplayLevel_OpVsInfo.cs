@@ -1,5 +1,4 @@
 using DG.Tweening;
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -13,6 +12,8 @@ public class DisplayLevel_OpVsInfo : DisplayLevel
         Instance = this;
     }
 
+    bool canPress = false;
+
     public Image[] images;
 
     public int correctImage = 0;
@@ -20,9 +21,35 @@ public class DisplayLevel_OpVsInfo : DisplayLevel
     bool canInteract = false;
     public List<BiasButton> buttons = new List<BiasButton>();
 
+    public override void StartLevel() {
+        base.StartLevel();
+
+        foreach (var button in buttons) {
+            button.Hide();
+        }
+    }
+
+    public override void OnMediaDownloaded() {
+        base.OnMediaDownloaded();
+
+        foreach (var button in buttons) {
+            button.FadeIn();
+        }
+
+        canPress = true;
+    }
+
 
     public void PressButton(int index) {
 
+        if ( !canPress)
+        {
+            return;   
+        }
+        canPress = false;
+        foreach (var button in buttons) {
+            button.FadeOut();
+        }
         string correctAnswer = GetCurrentDocument().correctStatement.ToLower();
         string chosenAnswer = buttons[index].GetComponentInChildren<TextMeshProUGUI>().text.ToLower();
         Debug.Log($"correct answer : {correctAnswer}");
@@ -35,14 +62,7 @@ public class DisplayLevel_OpVsInfo : DisplayLevel
             MissionDisplay.instance.Document_Fail();
         }
 
-
-        targetImage.DOColor(Color.clear, 0.5f);
     }
 
-    public override void UpdateCurrentDocument() {
-        base.UpdateCurrentDocument();
-
-        targetImage.DOColor(Color.white, 0.5f);
-    }
 
 }

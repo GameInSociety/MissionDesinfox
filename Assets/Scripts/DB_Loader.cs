@@ -1,32 +1,52 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Analytics;
 
 public class DB_Loader : DataDownloader
 {
-    int lineIndex = 0;
+    public static DB_Loader Instance;
 
-    private void Start() {
-        Load();
+    private void Awake() {
+        Instance = this;
     }
+
+    int lineIndex = 0;
 
     public override void GetCell(int rowIndex, List<string> cells) {
         base.GetCell(rowIndex, cells);
 
-        Debug.Log($"sheet index : {sheetName}");
-        if (rowIndex < 2)
+        if (sheetIndex == 4) {
+            if (!string.IsNullOrEmpty(cells[3])) {
+                // add color
+                var cc = new DisplayMedia.ColorCode();
+                cc.name = cells[3];
+                cc.hexa = cells[4];
+                cc.index = DisplayMedia.Instance.colorCodes.Count;
+                DisplayMedia.Instance.colorCodes.Add(cc);
+            }
+        }
+
+        if (rowIndex < 1)
             return;
-        if ( sheetIndex >= 4 ) {
+
+        if ( sheetIndex == 4) {
+
+            if ( rowIndex >= 4 && rowIndex <= 10) {
+                if ( rowIndex == 4) {
+                    MissionIntroDisplay.Instance.gameIntroduction = cells[6];
+                } else if (rowIndex == 9) {
+                    MissionIntroDisplay.Instance.gameConclusion= cells[6];
+                } else {
+                    MissionIntroDisplay.Instance.missionIntroductions.Add(cells[6]);
+                }
+            }
             return;
         }
 
         if (!string.IsNullOrEmpty(cells[0])) {
             lineIndex = 0;
             var newDocument = new Document();
-            newDocument.name = cells[0];
-            newDocument.imageName = cells[1];
+            newDocument.types = cells[0].Split(" / ").ToList();
             LevelManager.Instance.levels[sheetIndex].documents.Add(newDocument);
         }
 
@@ -35,20 +55,23 @@ public class DB_Loader : DataDownloader
             // fnof
             case 0:
                 if (lineIndex == 0) {
-                    lastDocument.maskName = cells[2];
+                    lastDocument.medias.Add(cells[1]);
+                    lastDocument.medias.Add(cells[2]);
                     lastDocument.fake = !string.IsNullOrEmpty(cells[3]);
                 }
                 lastDocument.interactibleElements.Add(cells[4]);
-                lastDocument.explanation = cells[7];
+                lastDocument.explanation = cells[8];
                 break;
             // HVSOP
             case 1:
+                lastDocument.medias.Add(cells[1]);
                 lastDocument.correctStatement = cells[2];
                 lastDocument.clue = cells[3];
                 lastDocument.explanation = cells[4];
                 break;
                 // biais
             case 2:
+                lastDocument.medias.Add(cells[1]);
                 lastDocument.correctStatement = cells[2];
                 lastDocument.clue = cells[3];
                 lastDocument.explanation = cells[4];
@@ -57,7 +80,7 @@ public class DB_Loader : DataDownloader
             case 3:
                 for (int i = 0;i < 4; ++i) {
                     if ( lineIndex == 0)
-                        lastDocument.sources.Add(cells[i + 1]);
+                        lastDocument.medias.Add(cells[i + 1]);
                     else
                         lastDocument.statements.Add(cells[i+1]);
                 }

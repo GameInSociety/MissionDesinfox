@@ -1,8 +1,5 @@
 using DG.Tweening;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class DisplayLevel_FakeInfo : DisplayLevel
 {
@@ -13,14 +10,27 @@ public class DisplayLevel_FakeInfo : DisplayLevel
 
     public override void StartLevel() {
         base.StartLevel();
+        button_Fake.Hide();
+        button_Info.Hide();
     }
 
     public override void UpdateCurrentDocument() {
         base.UpdateCurrentDocument();
+    }
+
+    public override void OnMediaDownloaded() {
+        base.OnMediaDownloaded();
         button_Fake.FadeIn();
         button_Info.FadeIn();
+        button_Fake.GetComponentInChildren<Animator>().SetBool("bounce", false);
+        button_Info.GetComponentInChildren<Animator>().SetBool("bounce", false);
+        canPress = true;
     }
     public void PressInfo() {
+
+        if (!canPress) {
+            return;
+        }
         if (!GetCurrentDocument().fake) {
             ++correctAnswers;
             MissionDisplay.instance.Document_Sucess();
@@ -29,16 +39,19 @@ public class DisplayLevel_FakeInfo : DisplayLevel
 
         }
 
+        button_Info.GetComponentInChildren<Animator>().SetBool("bounce", true);
         button_Fake.FadeOut();
         Press();
     }
 
     public void Press() {
-        targetImage.DOColor(Color.clear, 0.5f);
         canPress = false;
     }
 
     public void PressFake() {
+        if (!canPress) {
+            return;
+        }
         if (GetCurrentDocument().fake) {
             ++correctAnswers;
             MissionDisplay.instance.Document_Sucess();
@@ -47,6 +60,7 @@ public class DisplayLevel_FakeInfo : DisplayLevel
         }
 
         button_Info.FadeOut();
+        button_Fake.GetComponentInChildren<Animator>().SetBool("bounce", true);
         Press();
         
     }
