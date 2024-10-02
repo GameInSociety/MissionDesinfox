@@ -27,16 +27,15 @@ public class DisplayLevel_FakeInfo : DisplayLevel
         canPress = true;
     }
     public void PressInfo() {
-
+        Debug.Log($"pressing in fo");
         if (!canPress) {
             return;
         }
-        if (!GetCurrentDocument().fake) {
+        if (GetCurrentDocument().fake) {
+            MissionDisplay.instance.Document_Fail();
+        } else {
             ++correctAnswers;
             MissionDisplay.instance.Document_Sucess();
-        } else {
-            MissionDisplay.instance.Document_Fail();
-
         }
 
         button_Info.GetComponentInChildren<Animator>().SetBool("bounce", true);
@@ -49,6 +48,7 @@ public class DisplayLevel_FakeInfo : DisplayLevel
     }
 
     public void PressFake() {
+        Debug.Log($"pressing fake");
         if (!canPress) {
             return;
         }

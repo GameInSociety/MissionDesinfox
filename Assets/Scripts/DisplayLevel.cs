@@ -36,13 +36,19 @@ public class DisplayLevel : Displayable
         }
     }
 
+    string phrase = "";
+    public void BigEndLevel(string _phrase) {
+        phrase = _phrase;
+        EndLevel();
+        Invoke("End2", 1f);
+        Invoke("End3", 2f);
+    }
+
     public virtual void NextDocument() {
         ++documentIndex;
-        if ( documentIndex == level.documents.Count) {
+        if ( MissionDisplay.instance.lives <= 0 || documentIndex == level.documents.Count) {
             Debug.Log($"ENDING LEVEL");
-            EndLevel();
-            Invoke("End2", 1f);
-            Invoke("End3", 2f);
+            BigEndLevel("Le niveau est terminé !");
             //MissionDisplay.instance.ShowScore(timer, correctAnswers, level.documents.Count);
             return;
         }
@@ -53,11 +59,9 @@ public class DisplayLevel : Displayable
     public void EndLevel() {
         level.finished = true;
         active = false;
-        FadeOut();
-        
     }
     void End2() {
-        DisplayDialogue.Instance.Display($"Le niveau est fini !");
+        DisplayDialogue.Instance.Display(phrase);
 
     }
     void End3() {

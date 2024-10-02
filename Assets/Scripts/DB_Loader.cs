@@ -31,14 +31,31 @@ public class DB_Loader : DataDownloader
 
         if ( sheetIndex == 4) {
 
-            if ( rowIndex >= 4 && rowIndex <= 10) {
-                if ( rowIndex == 4) {
-                    MissionIntroDisplay.Instance.gameIntroduction = cells[6];
-                } else if (rowIndex == 9) {
-                    MissionIntroDisplay.Instance.gameConclusion= cells[6];
-                } else {
-                    MissionIntroDisplay.Instance.missionIntroductions.Add(cells[6]);
-                }
+            switch (rowIndex) {
+                case 4:
+                    MissionIntroDisplay.Instance.gameIntroduction = cells[1];
+                    Debug.Log($"introduction : {cells[1]}");
+                    break;
+                case 5:
+                    MissionIntroDisplay.Instance.gameConclusion= cells[1];
+                    Debug.Log($"conclusion : {cells[1]}");
+                    break;
+                case 6:
+                case 7:
+                case 8:
+                case 9:
+                    MissionIntroDisplay.Instance.biaisDefs.Add(cells[1]);
+                    Debug.Log($"definitions : {cells[1]}");
+                    break;
+                case 10:
+                case 11:
+                case 12:
+                case 13:
+                    MissionIntroDisplay.Instance.missionIntroductions.Add(cells[1]);
+                    Debug.Log($"niveau : {cells[1]}");
+                    break;
+                default:
+                    break;
             }
             return;
         }
@@ -57,24 +74,29 @@ public class DB_Loader : DataDownloader
                 if (lineIndex == 0) {
                     lastDocument.medias.Add(cells[1]);
                     lastDocument.medias.Add(cells[2]);
-                    lastDocument.fake = !string.IsNullOrEmpty(cells[3]);
+                    lastDocument.fake = cells[3] == "Fake";
+                    lastDocument.explanation_Good = cells[8];
+                    lastDocument.explanation_Bad = cells[9];
+                    lastDocument.clue = cells[10];
                 }
                 lastDocument.interactibleElements.Add(cells[4]);
-                lastDocument.explanation = cells[8];
+                
                 break;
             // HVSOP
             case 1:
                 lastDocument.medias.Add(cells[1]);
                 lastDocument.correctStatement = cells[2];
-                lastDocument.clue = cells[3];
-                lastDocument.explanation = cells[4];
+                lastDocument.explanation_Good = cells[3];
+                lastDocument.explanation_Bad= cells[4];
+                lastDocument.clue = cells[5];
                 break;
                 // biais
             case 2:
                 lastDocument.medias.Add(cells[1]);
                 lastDocument.correctStatement = cells[2];
-                lastDocument.clue = cells[3];
-                lastDocument.explanation = cells[4];
+                lastDocument.explanation_Good = cells[3];
+                lastDocument.explanation_Bad = cells[4];
+                lastDocument.clue = cells[5];
                 break;
                 // quoi croire
             case 3:
@@ -84,7 +106,9 @@ public class DB_Loader : DataDownloader
                     else
                         lastDocument.statements.Add(cells[i+1]);
                 }
-                lastDocument.explanation = cells[5];
+                lastDocument.explanation_Good = cells[5];
+                lastDocument.explanation_Bad = cells[6];
+                lastDocument.clue = cells[7];
                 break;
             default:
                 break;

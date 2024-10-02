@@ -98,7 +98,7 @@ public class MissionDisplay : Displayable
     }
 
     void Document_SucessDelay() {
-        DisplayDialogue.Instance.Display($"Bravo !\n{currentLevel.GetCurrentDocument().explanation}");
+        DisplayDialogue.Instance.Display($"Bravo !\n{currentLevel.GetCurrentDocument().explanation_Good}");
         DisplayDialogue.Instance.onClose += currentLevel.NextDocument;
     }
 
@@ -113,14 +113,22 @@ public class MissionDisplay : Displayable
     }
 
     void Document_FailDelay() {
-        DisplayDialogue.Instance.Display($"Raté !\n{currentLevel.GetCurrentDocument().explanation}");
+        DisplayDialogue.Instance.Display($"Raté !\n{currentLevel.GetCurrentDocument().explanation_Bad}");
+
+        if ( lives <= 0) {
+            currentLevel.BigEndLevel("Mince ! Tu n'as plus de vies. Recommence plus tard !");
+            return;
+        }
+
         DisplayDialogue.Instance.onClose += currentLevel.NextDocument;
     }
 
 
     public void Help() {
-        if (string.IsNullOrEmpty(currentLevel.GetCurrentDocument().clue))
+        if (string.IsNullOrEmpty(currentLevel.GetCurrentDocument().clue)) {
+            Debug.Log("no clue");
             return;
+        }
         DisplayDialogue.Instance.Display(currentLevel.GetCurrentDocument().clue);
     }
     
@@ -137,6 +145,7 @@ public class MissionDisplay : Displayable
     public void ExitLevel() {
         Level level = LevelManager.Instance.currentLevel;
         displayLevels[(int)level.type].EndLevel();
+        displayLevels[(int)level.type].FadeOut();
         FadeOut();
         score_Displayable.Hide();
         SelectionMenu.Instance.FadeIn();

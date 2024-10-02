@@ -7,10 +7,16 @@ public class BiasButton : Displayable, IPointerClickHandler {
 
     public TextMeshProUGUI uiText;
 
+    public string description;
+
     public void Display(Category category) {
         FadeIn();
         uiText.text = category.name;
 
+    }
+
+    public void ShowExplanation() {
+        DisplayMessage.Instance.Display(MissionIntroDisplay.Instance.biaisDefs[index]);
     }
 
     public void OnPointerClick(PointerEventData eventData) {

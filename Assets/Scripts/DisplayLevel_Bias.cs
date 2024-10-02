@@ -42,6 +42,7 @@ public class DisplayLevel_Bias : DisplayLevel
         }
         string correctAnswer = GetCurrentDocument().correctStatement.ToLower();
         string chosenAnswer = buttons[index].GetComponentInChildren<TextMeshProUGUI>().text.ToLower();
+
         Debug.Log($"correct answer : {correctAnswer}");
         Debug.Log($"chosen answer : {chosenAnswer}");
 

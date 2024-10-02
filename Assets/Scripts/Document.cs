@@ -10,7 +10,8 @@ public class Document
 
 
     public string clue = "";
-    public string explanation = "";
+    public string explanation_Good = "";
+    public string explanation_Bad = "";
     
 
     // fnof

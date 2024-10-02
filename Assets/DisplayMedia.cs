@@ -6,7 +6,6 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 using DG.Tweening;
 using UnityEngine.Video;
-using JetBrains.Annotations;
 using TMPro;
 
 public class DisplayMedia : Displayable
@@ -30,6 +29,7 @@ public class DisplayMedia : Displayable
     /// </summary>
     public Image image;
     public GameObject image_group;
+    public ScrollRect image_ScrollView;
 
     /// <summary>
     /// TEXT
@@ -52,8 +52,6 @@ public class DisplayMedia : Displayable
     /// <summary>
     /// ZOOM
     /// </summary>
-    public Slider slider;
-    public Displayable slide_displayble;
     public Transform slide_Target;
     Vector2 initscale;
     bool canZoom = false;
@@ -74,6 +72,9 @@ public class DisplayMedia : Displayable
     public List<InteractibleElement> interactibleElements = new List<InteractibleElement>();
     float lerp = 0.1f;
     public GameObject closable_group;
+    private float currentZoom = 0.5f;
+    public float targetZoom = 0.5f;
+    public float zoomStep = 0.2f;
 
     [System.Serializable]
     public class PixelGroup {
@@ -94,16 +95,18 @@ public class DisplayMedia : Displayable
     }
 
     private void Update() {
+        currentZoom = targetZoom;
         if ( canZoom)
-            slide_Target.localScale = Vector2.Lerp(Vector2.one * 0.5f, Vector2.one * 1.5f, slider.value);
+            slide_Target.localScale = Vector2.Lerp(Vector2.one * 0.5f, Vector2.one * 1.5f, currentZoom);
     }
 
     public void LoadMedia(string type, string url, bool closable) {
 
         FadeIn();
 
+        targetZoom = 0.5f;
+
         slide_Target.localScale = Vector3.one;
-        slide_displayble.Hide();
         canZoom = false;
         
         closable_group.SetActive(closable);
@@ -112,6 +115,9 @@ public class DisplayMedia : Displayable
 
         if (type != "text")
             DisplayLoading.Instance.FadeIn();
+
+        foreach (var item in interactibleElements)
+            item.gameObject.SetActive(false);
 
 
         video_group.SetActive(false);
@@ -137,9 +143,17 @@ public class DisplayMedia : Displayable
         }
     }
 
+    public void ZoomIn() {
+        targetZoom -= zoomStep;
+        currentZoom = Mathf.Clamp01(currentZoom);
+    }
+
+    public void ZoomOut() {
+        targetZoom += zoomStep;
+        currentZoom = Mathf.Clamp01(currentZoom);
+    }
+
     void EnableZoom() {
-        slide_displayble.FadeIn();
-        slider.value = 0.5f;
         canZoom = true;
 
     }
@@ -152,16 +166,15 @@ public class DisplayMedia : Displayable
     }
 
     IEnumerator DownloadVideoCoroutine() {
+        video_player.GetComponent<RawImage>().enabled = false;
         video_group.SetActive(true);
         video_player.Prepare();
 
-        while (!video_player.isPrepared) {
+        while (!video_player.isPrepared)
             yield return new WaitForEndOfFrame();
-        }
 
-        Debug.Log($"Video Finished Loading");
-            yield return new WaitForEndOfFrame();
         video_player.Play();
+        video_player.GetComponent<RawImage>().enabled = true;
         Finish_Download();
 
     }
@@ -180,18 +193,42 @@ public class DisplayMedia : Displayable
 
         bool loadMask = MissionDisplay.instance.currentLevel.level.type == Level.Type.FakeInfo;
         DisplayLoading.Instance.FadeIn();
-        using (UnityWebRequest request = UnityWebRequestTexture.GetTexture(url)) {
-            Debug.Log($"sending request");
-            yield return request.SendWebRequest();
 
-            var myTexture = ((DownloadHandlerTexture)request.downloadHandler).texture;
-            if ( myTexture == null) {
+        UnityWebRequest www = UnityWebRequestTexture.GetTexture(url);
+        www.SendWebRequest();
+
+        while (!www.isDone)
+            yield return new WaitForEndOfFrame();
+
+        Debug.Log($"Finished Downloading Image");
+
+        if (www.result != UnityWebRequest.Result.Success) {
+            Debug.Log(www.error);
+            DisplayMessage.Instance.Display($"Erreur en cherchant l'image\n{url}:\n{www.error}");
+        } else {
+            var myTexture = ((DownloadHandlerTexture)www.downloadHandler).texture;
+            if (myTexture == null) {
                 Debug.LogError($"pas de texture bug");
             }
             image.sprite = Sprite.Create(myTexture, new Rect(Vector2.zero, new Vector2(myTexture.width, myTexture.height)), Vector2.zero);
+
+            var ar = image.GetComponent<AspectRatioFitter>();
+            ar.aspectRatio = (float)myTexture.width / myTexture.height;
+
         }
 
-        yield return new WaitForEndOfFrame();
+        /////////////
+
+        
+        using (UnityWebRequest request = UnityWebRequestTexture.GetTexture(url)) {
+            Debug.Log($"sending request");
+
+
+            yield return request.SendWebRequest();
+            yield return new WaitForEndOfFrame();
+
+           ;
+        }
 
         image.SetNativeSize();
         if (loadMask) {
@@ -201,6 +238,7 @@ public class DisplayMedia : Displayable
             Finish_Download();
             EnableZoom();
         }
+
 
 
     }
@@ -297,11 +335,11 @@ public class DisplayMedia : Displayable
                     pixelGroup.end.y = actualPixelPos.y;
             }
 
-            ++loadLimit;
+            /*++loadLimit;
             if (loadLimit%30 == 0) {
                 yield return new WaitForEndOfFrame();
                 DisplayLoading.Instance.Push(0.8f+ (float)loadLimit / 3000f);
-            }
+            }*/
 
 
         }
@@ -382,6 +420,8 @@ public class DisplayMedia : Displayable
     #endregion
 
     public void Finish_Download() {
+        image_ScrollView.horizontalNormalizedPosition = 0f;
+        image_ScrollView.verticalNormalizedPosition = 1f;
         DisplayLoading.Instance.FadeOut();
         if (onMediaDownloaded != null)
             onMediaDownloaded();

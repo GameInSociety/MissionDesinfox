@@ -9,6 +9,8 @@ public class MissionIntroDisplay : Displayable
     public static MissionIntroDisplay Instance;
 
     public List<string> missionIntroductions = new List<string>();
+    public List<string> biaisTitles= new List<string>();
+    public List<string> biaisDefs= new List<string>();
     public string gameIntroduction;
     public string gameConclusion;
 
