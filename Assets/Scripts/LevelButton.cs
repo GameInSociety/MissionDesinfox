@@ -29,8 +29,6 @@ public class LevelButton : MonoBehaviour, IPointerClickHandler {
     }
 
     private void Start() {
-
-
         level = LevelManager.Instance.levels.Find(x => x.type == type);
         title_text.text = level.name;
 

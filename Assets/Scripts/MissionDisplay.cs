@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class MissionDisplay : Displayable
 {
+    static bool showedConclusion = false;
+
     public static MissionDisplay instance;
 
     public DisplayLevel[] displayLevels;
@@ -40,6 +42,8 @@ public class MissionDisplay : Displayable
     public Image[] lives_Images;
     public int lives = 5;
 
+    public bool levelEnded = false;
+
     public int maxLives = 5;
 
     private void Awake() {
@@ -47,6 +51,8 @@ public class MissionDisplay : Displayable
     }
 
     public void DisplayMission() {
+
+        levelEnded = false;
 
         foreach (var displayLevel in displayLevels) {
             displayLevel.Hide();
@@ -65,6 +71,7 @@ public class MissionDisplay : Displayable
     }
 
     public void ShowScore(float time, int correctAnsers, int totalAnswers) {
+        levelEnded = true;
         score_Displayable.FadeIn();
         Level level = LevelManager.Instance.currentLevel;
 
@@ -80,12 +87,21 @@ public class MissionDisplay : Displayable
 
         correctResponses_Text.text = $"{correctAnsers} / {totalAnswers}";
 
+        
+
         float lerp = (float)correctAnsers / totalAnswers;
+        Debug.Log($"lerp : {lerp}");
         int score = (int)lerp * 3;
-        Debug.Log($"medal : {score}");
-        Debug.Log($"time : {time_i}");
         score = Mathf.Clamp(score, 0, 2);
-        medal_Image.sprite = medal_Sprites[score];
+
+        if (lerp >= 0.9f) {
+            medal_Image.sprite = medal_Sprites[2];
+        } else if ( lerp < 0.3f) {
+            medal_Image.sprite = medal_Sprites[0];
+        } else {
+            medal_Image.sprite = medal_Sprites[1];
+        }
+
     }
 
     public void Document_Sucess() {
@@ -142,7 +158,67 @@ public class MissionDisplay : Displayable
         character_Image.sprite = character_Sprites[5-i];
     }
 
+    public void NextLevel() {
+        bool finished = true;
+        foreach (var lvl in LevelManager.Instance.levels) {
+            if (!lvl.finished) {
+                finished = false;
+            }
+        }
+
+        if (finished && levelEnded) {
+            DisplayMessage.Instance.Display(MissionIntroDisplay.Instance.gameConclusion);
+            DisplayMessage.Instance.onClose = ExitLevelDelay;
+            return;
+        }
+
+
+        Level level = LevelManager.Instance.currentLevel;
+        if(level.index == 3) {
+            ExitLevel();
+            return;
+        }
+
+
+        displayLevels[(int)level.type].EndLevel();
+        displayLevels[(int)level.type].FadeOut();
+        FadeOut();
+        score_Displayable.Hide();
+        if (score_Displayable.state == State.visible)
+            score_Displayable.FadeOut();
+
+        Invoke("NextLevelDelay", 0.4f);
+    }
+
+    void NextLevelDelay() {
+        var nextIndex = LevelManager.Instance.currentLevel.index +1 ;
+        Level level = LevelManager.Instance.levels[nextIndex];
+        LevelManager.Instance.currentLevel = level;
+        MissionIntroDisplay.Instance.FadeIn();
+        MissionIntroDisplay.Instance.description_text.text = $"{level.description}";
+        MissionIntroDisplay.Instance.UpdateUI();
+    }
+
     public void ExitLevel() {
+
+        bool finished = true;
+        foreach (var lvl in LevelManager.Instance.levels) {
+            if (!lvl.finished) {
+                finished = false;
+            }
+        }
+
+        if (finished && levelEnded) {
+            DisplayMessage.Instance.Display(MissionIntroDisplay.Instance.gameConclusion);
+            DisplayMessage.Instance.onClose = ExitLevelDelay;
+            return;
+        }
+
+
+        ExitLevelDelay();
+    }
+
+    void ExitLevelDelay() {
         Level level = LevelManager.Instance.currentLevel;
         displayLevels[(int)level.type].EndLevel();
         displayLevels[(int)level.type].FadeOut();
@@ -151,16 +227,6 @@ public class MissionDisplay : Displayable
         SelectionMenu.Instance.FadeIn();
         if (score_Displayable.state == State.visible)
             score_Displayable.FadeOut();
-
-        foreach (var lvl in LevelManager.Instance.levels) {
-            if (!lvl.finished) {
-                return;
-            }
-        }
-
-
-        DisplayMessage.Instance.Display(MissionIntroDisplay.Instance.gameConclusion);
-
     }
 
 

@@ -10,6 +10,7 @@ public class Level
         QuoiCroire
     }
 
+    public int index;
 
     public string name = "";
 

@@ -12,9 +12,10 @@ public class Document
     public string clue = "";
     public string explanation_Good = "";
     public string explanation_Bad = "";
-    
+
 
     // fnof
+    public List<string> colorNames = new List<string>();
     public bool fake = false;
     public List<string> interactibleElements = new List<string>();
     public List<string> statements = new List<string>();

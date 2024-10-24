@@ -7,6 +7,8 @@ public class BiasButton : Displayable, IPointerClickHandler {
 
     public TextMeshProUGUI uiText;
 
+    public bool biais = false;
+
     public string description;
 
     public void Display(Category category) {
@@ -16,7 +18,7 @@ public class BiasButton : Displayable, IPointerClickHandler {
     }
 
     public void ShowExplanation() {
-        DisplayMessage.Instance.Display(MissionIntroDisplay.Instance.biaisDefs[index]);
+        DisplayMessage.Instance.Display(biais ? MissionIntroDisplay.Instance.biaisDefs[index] : MissionIntroDisplay.Instance.hpDefs[index]);
     }
 
     public void OnPointerClick(PointerEventData eventData) {

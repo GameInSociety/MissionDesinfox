@@ -19,8 +19,13 @@ public class DB_Loader : DataDownloader
             if (!string.IsNullOrEmpty(cells[3])) {
                 // add color
                 var cc = new DisplayMedia.ColorCode();
-                cc.name = cells[3];
-                cc.hexa = cells[4];
+                cc.name = cells[2];
+                cc.hexa = cells[3];
+                Color color;
+                if (!ColorUtility.TryParseHtmlString($"#{cc.hexa}", out color)) {
+                    Debug.LogError($"no color match hexa : {cc.hexa}");
+                }
+                cc.color = color;
                 cc.index = DisplayMedia.Instance.colorCodes.Count;
                 DisplayMedia.Instance.colorCodes.Add(cc);
             }
@@ -45,12 +50,19 @@ public class DB_Loader : DataDownloader
                 case 8:
                 case 9:
                     MissionIntroDisplay.Instance.biaisDefs.Add(cells[1]);
-                    Debug.Log($"definitions : {cells[1]}");
+                    Debug.Log($"BIAIS definitions : {cells[1]}");
                     break;
                 case 10:
                 case 11:
                 case 12:
                 case 13:
+                    MissionIntroDisplay.Instance.hpDefs.Add(cells[1]);
+                    Debug.Log($"Hypothese defs : {cells[1]}");
+                    break;
+                case 14:
+                case 15:
+                case 16:
+                case 17:
                     MissionIntroDisplay.Instance.missionIntroductions.Add(cells[1]);
                     Debug.Log($"niveau : {cells[1]}");
                     break;
@@ -79,8 +91,9 @@ public class DB_Loader : DataDownloader
                     lastDocument.explanation_Bad = cells[9];
                     lastDocument.clue = cells[10];
                 }
+                    lastDocument.colorNames.Add(cells[6]);
                 lastDocument.interactibleElements.Add(cells[4]);
-                
+
                 break;
             // HVSOP
             case 1:

@@ -65,6 +65,7 @@ public class DisplayMedia : Displayable
         public string name;
         public string hexa;
         public int index;
+        public Color color;
     }
 
     public Transform interactibleElement_Parent;
@@ -357,6 +358,8 @@ public class DisplayMedia : Displayable
 
             // instantiate 
             if (index >= interactibleElements.Count) {
+                Debug.Log($"New Interactible Element");
+
                 InteractibleElement dz = Instantiate(interactibleElement_Prefab, interactibleElement_Parent);
                 interactibleElements.Add(dz);
             }
@@ -367,12 +370,21 @@ public class DisplayMedia : Displayable
             interactibleElements[index].GetComponent<RectTransform>().sizeDelta = new Vector2(pixelGroup.end.x - pixelGroup.start.x, pixelGroup.end.y - pixelGroup.start.y); ;
             interactibleElements[index].GetComponent<RectTransform>().anchoredPosition = new Vector2(pixelGroup.start.x, -(maskTexture.height- pixelGroup.start.y) +(pixelGroup.end.y - pixelGroup.start.y));
 
-            int codeIndex = colorCodes.Find(x => x.name == pixelGroup.hexa).index;
+            var colorCode = colorCodes.Find(x => x.hexa == pixelGroup.hexa);
 
-            string text = MissionDisplay.instance.currentLevel.GetCurrentDocument().interactibleElements[codeIndex];
+            if ( string.IsNullOrEmpty( colorCode.name) ) {
+                DisplayMessage.Instance.Display($"Data Base error : La couleur {pixelGroup.hexa} ne fait pas parti de la liste");
+            }
+
+            var doc = MissionDisplay.instance.currentLevel.GetCurrentDocument();
+
+            var colorIndex = doc.colorNames.FindIndex(x => x == colorCode.name);
+
+            string text = doc.interactibleElements[colorIndex];
             interactibleElements[index].Display(index, text, pixelGroup.color);
 
             index++;
+
             yield return new WaitForEndOfFrame();
         }
 

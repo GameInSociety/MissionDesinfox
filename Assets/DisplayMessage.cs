@@ -6,6 +6,9 @@ public class DisplayMessage : Displayable
 
     public TextMeshProUGUI uiText;
 
+    public delegate void OnClose();
+    public OnClose onClose;
+
     private void Awake() {
         Instance = this;
     }
@@ -14,5 +17,12 @@ public class DisplayMessage : Displayable
         FadeIn();
 
         uiText.text = str;
+    }
+
+    public void Close() {
+        if ( onClose != null) {
+            onClose();
+            onClose = null;
+        }
     }
 }
