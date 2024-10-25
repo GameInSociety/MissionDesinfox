@@ -15,6 +15,9 @@ public class MissionIntroDisplay : Displayable
     public string gameIntroduction;
     public string gameConclusion;
 
+    public string mail_adress;
+    public string mail_subject;
+
     public Sprite[] bg_sprites;
     public Sprite[] rect_sprites;
     public Sprite[] title_sprites;

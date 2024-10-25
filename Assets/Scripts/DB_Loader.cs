@@ -29,6 +29,15 @@ public class DB_Loader : DataDownloader
                 cc.index = DisplayMedia.Instance.colorCodes.Count;
                 DisplayMedia.Instance.colorCodes.Add(cc);
             }
+
+            if (rowIndex == 1) {
+                Debug.Log($"adresse mail : {cells[6]}");
+                MissionIntroDisplay.Instance.mail_adress = cells[6];
+            } else if (rowIndex == 3) {
+                Debug.Log($"adresse mail : {cells[6]}");
+                MissionIntroDisplay.Instance.mail_subject = cells[6];
+            }
+
         }
 
         if (rowIndex < 1)
@@ -37,6 +46,7 @@ public class DB_Loader : DataDownloader
         if ( sheetIndex == 4) {
 
             switch (rowIndex) {
+                case 1:
                 case 4:
                     MissionIntroDisplay.Instance.gameIntroduction = cells[1];
                     Debug.Log($"introduction : {cells[1]}");
