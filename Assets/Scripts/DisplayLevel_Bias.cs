@@ -17,7 +17,10 @@ public class DisplayLevel_Bias : DisplayLevel
     public override void StartLevel() {
         base.StartLevel();
 
-        foreach (var button in buttons) {
+        for (int i = 0; i < buttons.Count; i++)
+        {
+            var button = buttons[i];
+            button.uiText.text = MissionIntroDisplay.Instance.biaisTitles[i];
             button.Hide();
         }
     }

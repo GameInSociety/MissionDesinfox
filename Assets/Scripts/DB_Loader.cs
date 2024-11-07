@@ -59,6 +59,7 @@ public class DB_Loader : DataDownloader
                 case 7:
                 case 8:
                 case 9:
+                    MissionIntroDisplay.Instance.biaisTitles.Add(cells[0]);
                     MissionIntroDisplay.Instance.biaisDefs.Add(cells[1]);
                     Debug.Log($"BIAIS definitions : {cells[1]}");
                     break;
@@ -66,6 +67,7 @@ public class DB_Loader : DataDownloader
                 case 11:
                 case 12:
                 case 13:
+                    MissionIntroDisplay.Instance.hpTitles.Add(cells[0]);
                     MissionIntroDisplay.Instance.hpDefs.Add(cells[1]);
                     Debug.Log($"Hypothese defs : {cells[1]}");
                     break;

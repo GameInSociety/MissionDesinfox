@@ -24,7 +24,10 @@ public class DisplayLevel_OpVsInfo : DisplayLevel
     public override void StartLevel() {
         base.StartLevel();
 
-        foreach (var button in buttons) {
+        for (int i = 0; i < buttons.Count; i++)
+        {
+            var button = buttons[i];
+            button.uiText.text = MissionIntroDisplay.Instance.hpTitles[i];
             button.Hide();
         }
     }

@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using UnityEditor;
 
 public class MissionIntroDisplay : Displayable
 {
@@ -11,6 +12,7 @@ public class MissionIntroDisplay : Displayable
     public List<string> missionIntroductions = new List<string>();
     public List<string> biaisTitles= new List<string>();
     public List<string> biaisDefs= new List<string>();
+    public List<string> hpTitles = new List<string>();
     public List<string> hpDefs = new List<string>();
     public string gameIntroduction;
     public string gameConclusion;
