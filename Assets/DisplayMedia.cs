@@ -48,6 +48,10 @@ public class DisplayMedia : Displayable
     /// </summary>
     public GameObject video_group;
     public VideoPlayer video_player;
+    public Slider video_player_slider;
+    public Image playImage;
+    public Sprite playSprite;
+    public Sprite pauseSprite;
 
     /// <summary>
     /// ZOOM
@@ -87,11 +91,19 @@ public class DisplayMedia : Displayable
 
     public List<PixelGroup> pixelGroups = new List<PixelGroup>();
 
+    bool modifying = false;
+    float slider_timer = 0f;
+
+    public float LERP = 0f;
+    public float videotime;
+    public float videoduraiton;
+
     private void Awake() {
         Instance = this;
     }
 
     public override void Start() {
+        UpdatePlayButton();
         //base.Start();
     }
 
@@ -99,6 +111,39 @@ public class DisplayMedia : Displayable
         currentZoom = targetZoom;
         if ( canZoom)
             slide_Target.localScale = Vector2.Lerp(Vector2.one * 0.5f, Vector2.one * 1.5f, currentZoom);
+
+        /*videotime = (float)video_player.time;
+        videoduraiton = (float)video_player.length;
+        LERP = videotime / videoduraiton;
+
+        if (modifying) {
+            video_player.time = (float)video_player_slider.value * video_player.length;
+        } else {
+            video_player_slider.value = LERP;
+        }*/
+    }
+
+    public void JumpForward() {
+        video_player.time += 5f;
+    }
+
+    public void JumpBackwards() {
+        video_player.time -= 5f;
+    }
+
+    void UpdatePlayButton() {
+        playImage.sprite = video_player.isPlaying ? pauseSprite : playSprite;
+    }
+
+    public void SwitchPlay() {
+        if (video_player.isPlaying) {
+            video_player.Pause();
+        } else {
+            video_player.Play();
+        }
+
+        UpdatePlayButton();
+
     }
 
     public void LoadMedia(string type, string url, bool closable) {
@@ -111,7 +156,6 @@ public class DisplayMedia : Displayable
         canZoom = false;
         
         closable_group.SetActive(closable);
-        Debug.Log($"Document Type : {type}");
         type = type.ToLower();
 
         if (type != "text")
@@ -145,11 +189,13 @@ public class DisplayMedia : Displayable
     }
 
     public void ZoomIn() {
+        SoundManager.Instance.PlaySound("ZoomIn");
         targetZoom -= zoomStep;
         currentZoom = Mathf.Clamp01(currentZoom);
     }
 
     public void ZoomOut() {
+        SoundManager.Instance.PlaySound("ZoomOut");
         targetZoom += zoomStep;
         currentZoom = Mathf.Clamp01(currentZoom);
     }
@@ -161,7 +207,6 @@ public class DisplayMedia : Displayable
 
     #region video
     void LoadVideo(string url) {
-        Debug.Log("download video");
         video_player.url = url;
         StartCoroutine(DownloadVideoCoroutine());
     }
@@ -176,7 +221,10 @@ public class DisplayMedia : Displayable
 
         video_player.Play();
         video_player.GetComponent<RawImage>().enabled = true;
+            SoundManager.Instance.music_Source.Stop();
         Finish_Download();
+        UpdatePlayButton();
+
 
     }
     #endregion

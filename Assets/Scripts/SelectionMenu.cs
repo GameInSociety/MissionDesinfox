@@ -21,6 +21,11 @@ public class SelectionMenu : Displayable
         base.Start();
     }
 
+    public override void Show() {
+        base.Show();
+        SoundManager.Instance.PlayMusic("Menu");
+    }
+
     public void SwitchSound() {
         sound_Enabled = !sound_Enabled;
         sound_Image.sprite = sound_Sprites[sound_Enabled ? 0 : 1];
@@ -33,6 +38,9 @@ public class SelectionMenu : Displayable
                 item.audioOutputMode = VideoAudioOutputMode.None;
             }
         }
+        SoundManager.Instance.music_Source.volume = sound_Enabled ? 1 : 0;
+        SoundManager.Instance.sound_Source.volume = sound_Enabled ? 1 : 0;
+        SoundManager.Instance.click_Source.volume = sound_Enabled ? 1 : 0;
     }
 
 

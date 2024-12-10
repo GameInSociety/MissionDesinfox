@@ -25,6 +25,7 @@ public class LevelButton : MonoBehaviour, IPointerClickHandler {
         MissionIntroDisplay.Instance.FadeIn();
         MissionIntroDisplay.Instance.description_text.text = $"{level.description}";
         MissionIntroDisplay.Instance.UpdateUI();
+        SoundManager.Instance.PlaySound("Click");
 
     }
 

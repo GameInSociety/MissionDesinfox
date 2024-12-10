@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,7 +13,7 @@ public class DisplayLevel_QuoiCroire : DisplayLevel {
     public AudioSource audioSource;
     public TextMeshProUGUI uiText;
 
-    int correctIndex = 0;
+    public List<int> correctIndexes = new List<int>();
 
     bool canPress = false;
 
@@ -51,8 +52,6 @@ public class DisplayLevel_QuoiCroire : DisplayLevel {
             var url = doc.medias[i];
             string type = doc.types[i].ToLower();
 
-            Debug.Log($"type : {doc.types[i]} / media : {url}");
-
             sourceButtons[i].Display(type, url);
         }
 
@@ -61,13 +60,14 @@ public class DisplayLevel_QuoiCroire : DisplayLevel {
         foreach (var item in statement_Buttons) {
             item.Hide();
         }
+        correctIndexes.Clear();
         int index = 0;
         foreach (var button in statement_Buttons) {
             button.FadeIn();
             var statement = GetCurrentDocument().statements[index];
-            if ( statement.StartsWith("(TARGET) ")) {
-                correctIndex = index;
-                statement = statement.Remove(0, "(TARGET) ".Length);
+            if ( statement.StartsWith("(GOOD) ")) {
+                statement = statement.Remove(0, "(GOOD) ".Length);
+                correctIndexes.Add(index);
             }
             button.GetComponentInChildren<TextMeshProUGUI>().text = statement;
             ++index;
@@ -81,7 +81,7 @@ public class DisplayLevel_QuoiCroire : DisplayLevel {
             return;
         }
 
-        if (i == correctIndex) {
+        if (correctIndexes.Contains(i)) {
             ++correctAnswers;
             MissionDisplay.instance.Document_Sucess();
         } else {

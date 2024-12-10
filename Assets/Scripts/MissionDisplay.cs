@@ -65,6 +65,23 @@ public class MissionDisplay : Displayable
         displayLevels[(int)level.type].StartLevel();
         lives_Outline.color = lives_Colors[(int)level.type];
 
+        switch (level.type) {
+            case Level.Type.FakeInfo:
+                SoundManager.Instance.PlayMusic("Level 1");
+                break;
+            case Level.Type.OpVsInfo:
+                SoundManager.Instance.PlayMusic("Level 2");
+                break;
+            case Level.Type.Biais:
+                SoundManager.Instance.PlayMusic("Level 3");
+                break;
+            case Level.Type.QuoiCroire:
+                SoundManager.Instance.PlayMusic("Level 4");
+                break;
+            default:
+                break;
+        }
+
         lives = maxLives;
 
         UpdateCharacter();
@@ -72,6 +89,9 @@ public class MissionDisplay : Displayable
 
     public void ShowScore(float time, int correctAnsers, int totalAnswers) {
         levelEnded = true;
+        SoundManager.Instance.PlayMusic("Score");
+
+
         score_Displayable.FadeIn();
         Level level = LevelManager.Instance.currentLevel;
 
@@ -111,14 +131,17 @@ public class MissionDisplay : Displayable
         DisplayMedia.Instance.Reset();
 
         Invoke("Document_SucessDelay", 1.5f);
+        SoundManager.Instance.PlaySound("GoodAnswer");
     }
 
     void Document_SucessDelay() {
         DisplayDialogue.Instance.Display($"Bravo !\n{currentLevel.GetCurrentDocument().explanation_Good}");
         DisplayDialogue.Instance.onClose += currentLevel.NextDocument;
+        SoundManager.Instance.PlaySound("RewardYeah");
     }
 
     public void Document_Fail() {
+        SoundManager.Instance.PlaySound("BadAnswer");
         DisplayMessage.Instance.FadeOut();
         DisplayMedia.Instance.Reset();
         badFeedback_Obj.SetActive(true);
@@ -129,6 +152,7 @@ public class MissionDisplay : Displayable
     }
 
     void Document_FailDelay() {
+        SoundManager.Instance.PlaySound("RewardFail");
         DisplayDialogue.Instance.Display($"Raté !\n{currentLevel.GetCurrentDocument().explanation_Bad}");
 
         if ( lives <= 0) {

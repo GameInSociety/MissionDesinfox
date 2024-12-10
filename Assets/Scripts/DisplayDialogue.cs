@@ -18,6 +18,7 @@ public class DisplayDialogue : Displayable, IPointerClickHandler {
     }
 
     public void Display(string text) {
+        SoundManager.Instance.PlaySound("Pop");
         FadeIn();
         Tween.Bounce(transform);
         uiText.text = text;

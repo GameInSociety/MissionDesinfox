@@ -31,10 +31,8 @@ public class DB_Loader : DataDownloader
             }
 
             if (rowIndex == 1) {
-                Debug.Log($"adresse mail : {cells[6]}");
                 MissionIntroDisplay.Instance.mail_adress = cells[6];
             } else if (rowIndex == 3) {
-                Debug.Log($"adresse mail : {cells[6]}");
                 MissionIntroDisplay.Instance.mail_subject = cells[6];
             }
 
@@ -49,11 +47,9 @@ public class DB_Loader : DataDownloader
                 case 1:
                 case 4:
                     MissionIntroDisplay.Instance.gameIntroduction = cells[1];
-                    Debug.Log($"introduction : {cells[1]}");
                     break;
                 case 5:
                     MissionIntroDisplay.Instance.gameConclusion= cells[1];
-                    Debug.Log($"conclusion : {cells[1]}");
                     break;
                 case 6:
                 case 7:
@@ -61,7 +57,6 @@ public class DB_Loader : DataDownloader
                 case 9:
                     MissionIntroDisplay.Instance.biaisTitles.Add(cells[0]);
                     MissionIntroDisplay.Instance.biaisDefs.Add(cells[1]);
-                    Debug.Log($"BIAIS definitions : {cells[1]}");
                     break;
                 case 10:
                 case 11:
@@ -69,14 +64,12 @@ public class DB_Loader : DataDownloader
                 case 13:
                     MissionIntroDisplay.Instance.hpTitles.Add(cells[0]);
                     MissionIntroDisplay.Instance.hpDefs.Add(cells[1]);
-                    Debug.Log($"Hypothese defs : {cells[1]}");
                     break;
                 case 14:
                 case 15:
                 case 16:
                 case 17:
                     MissionIntroDisplay.Instance.missionIntroductions.Add(cells[1]);
-                    Debug.Log($"niveau : {cells[1]}");
                     break;
                 default:
                     break;

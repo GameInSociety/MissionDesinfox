@@ -36,7 +36,5 @@ public class SourceButton : Displayable, IPointerClickHandler {
     public void OnPointerClick(PointerEventData eventData) {
         Tween.Bounce(GetTransform);
         DisplayMedia.Instance.LoadMedia(type, url, true);
-
-        Debug.Log($"clicked {type}");
     }
 }

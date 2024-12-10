@@ -9,7 +9,7 @@ public class DisplayButton : Displayable, IPointerClickHandler
     public bool locked = false;
 
     public bool lockOnEnable = false;
-
+    public bool playsound = false;
     void OnEnable()
     {
         if (lockOnEnable)
@@ -25,11 +25,17 @@ public class DisplayButton : Displayable, IPointerClickHandler
             return;
         }
 
+        SoundManager.Instance.PlaySound("Click");
+
         Trigger();   
     }
     
     public void Trigger()
     {
+        if (playsound) {
+            SoundManager.Instance.music_Source.Play();
+        }
+
         Tween.Bounce(GetTransform);
 
         showTarget?.FadeIn();
