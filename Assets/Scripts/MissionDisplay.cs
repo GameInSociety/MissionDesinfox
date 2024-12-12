@@ -64,24 +64,6 @@ public class MissionDisplay : Displayable
         currentLevel = displayLevels[(int)level.type];
         displayLevels[(int)level.type].StartLevel();
         lives_Outline.color = lives_Colors[(int)level.type];
-
-        switch (level.type) {
-            case Level.Type.FakeInfo:
-                SoundManager.Instance.PlayMusic("Level 1");
-                break;
-            case Level.Type.OpVsInfo:
-                SoundManager.Instance.PlayMusic("Level 2");
-                break;
-            case Level.Type.Biais:
-                SoundManager.Instance.PlayMusic("Level 3");
-                break;
-            case Level.Type.QuoiCroire:
-                SoundManager.Instance.PlayMusic("Level 4");
-                break;
-            default:
-                break;
-        }
-
         lives = maxLives;
 
         UpdateCharacter();
