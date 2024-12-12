@@ -137,7 +137,7 @@ public class MissionDisplay : Displayable
     void Document_SucessDelay() {
         DisplayDialogue.Instance.Display($"Bravo !\n{currentLevel.GetCurrentDocument().explanation_Good}");
         DisplayDialogue.Instance.onClose += currentLevel.NextDocument;
-        SoundManager.Instance.PlaySound("RewardYeah");
+        //SoundManager.Instance.PlaySound("RewardYeah");
     }
 
     public void Document_Fail() {
@@ -152,7 +152,7 @@ public class MissionDisplay : Displayable
     }
 
     void Document_FailDelay() {
-        SoundManager.Instance.PlaySound("RewardFail");
+        //SoundManager.Instance.PlaySound("RewardFail");
         DisplayDialogue.Instance.Display($"Raté !\n{currentLevel.GetCurrentDocument().explanation_Bad}");
 
         if ( lives <= 0) {

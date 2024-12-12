@@ -52,6 +52,26 @@ public class MissionIntroDisplay : Displayable
         scrollRect.verticalNormalizedPosition = 0f;
 
         description_text.text = missionIntroductions[i];
+
+
+
+        switch (level.type) {
+            case Level.Type.FakeInfo:
+                SoundManager.Instance.PlayMusic("Level 1");
+                break;
+            case Level.Type.OpVsInfo:
+                SoundManager.Instance.PlayMusic("Level 2");
+                break;
+            case Level.Type.Biais:
+                SoundManager.Instance.PlayMusic("Level 3");
+                break;
+            case Level.Type.QuoiCroire:
+                SoundManager.Instance.PlayMusic("Level 4");
+                break;
+            default:
+                break;
+        }
+
     }
 
     public void StartMission() {
