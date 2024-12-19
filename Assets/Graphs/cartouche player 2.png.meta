@@ -156,7 +156,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      cartouche player 2_0: -730118371905303059
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

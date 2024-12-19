@@ -156,7 +156,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      soundbar_0: -8788974236378141733
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

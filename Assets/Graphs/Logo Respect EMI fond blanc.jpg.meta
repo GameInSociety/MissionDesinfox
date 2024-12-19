@@ -156,7 +156,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Logo Respect EMI fond blanc_0: -3839690302835048220
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

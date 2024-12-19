@@ -156,7 +156,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      blackbackvideo_0: 973958306804257915
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
