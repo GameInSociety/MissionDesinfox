@@ -219,7 +219,7 @@ public class DisplayMedia : Displayable
         while (!video_player.isPrepared)
             yield return new WaitForEndOfFrame();
 
-        video_player.Play();
+        //video_player.Play();
         video_player.GetComponent<RawImage>().enabled = true;
             SoundManager.Instance.music_Source.Stop();
         Finish_Download();
