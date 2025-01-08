@@ -6908,7 +6908,7 @@ MonoBehaviour:
   hideTarget: {fileID: 0}
   locked: 0
   lockOnEnable: 0
-  playsound: 1
+  playsound: 0
 --- !u!1 &618680990
 GameObject:
   m_ObjectHideFlags: 0
@@ -11788,7 +11788,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1588100718794228634, guid: 45a09645b7ed9b948943a6d5eebe958f, type: 3}
       propertyPath: playsound
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1588100718794228634, guid: 45a09645b7ed9b948943a6d5eebe958f, type: 3}
       propertyPath: hideTarget
