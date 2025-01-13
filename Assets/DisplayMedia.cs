@@ -232,7 +232,7 @@ public class DisplayMedia : Displayable
     {
         base.Hide();
 
-        SoundManager.Instance.music_Source.volume = 0.5f;
+        SoundManager.Instance.music_Source.volume = 1;
 
     }
 
