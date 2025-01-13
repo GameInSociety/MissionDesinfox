@@ -220,7 +220,8 @@ public class DisplayMedia : Displayable
             yield return new WaitForEndOfFrame();
                 
         video_player.GetComponent<RawImage>().enabled = true;
-            SoundManager.Instance.music_Source.volume=0;
+        video_player.time = 0f;
+        SoundManager.Instance.music_Source.mute = true;
         video_player.Pause();
         Finish_Download();
         UpdatePlayButton();
@@ -232,7 +233,9 @@ public class DisplayMedia : Displayable
     {
         base.Hide();
 
-        SoundManager.Instance.music_Source.volume = 1;
+        if (SelectionMenu.Instance.sound_Enabled) {
+            SoundManager.Instance.music_Source.mute = false;
+        }
 
     }
 

@@ -52,6 +52,7 @@ public class MissionDisplay : Displayable
 
     public void DisplayMission() {
 
+        DisplayLoading.Instance.Hide();
         levelEnded = false;
 
         foreach (var displayLevel in displayLevels) {

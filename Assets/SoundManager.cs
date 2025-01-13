@@ -16,12 +16,18 @@ public class SoundManager : MonoBehaviour
         public AudioClip clip;
     }
 
+    public float initVolume = 0.5f;
+
     public AudioSource click_Source;
     public AudioSource sound_Source;
     public AudioSource music_Source;
 
     public List<Sound> sounds = new List<Sound>(); 
     public List<Sound> musics = new List<Sound>();
+
+    private void Start() {
+        music_Source.volume = initVolume;
+    }
 
     public void PlaySound(string name) {
         var sound = sounds.Find(x=> x.name == name);

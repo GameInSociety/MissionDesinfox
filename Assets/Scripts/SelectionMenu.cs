@@ -29,7 +29,11 @@ public class SelectionMenu : Displayable
     public void SwitchSound() {
         sound_Enabled = !sound_Enabled;
         sound_Image.sprite = sound_Sprites[sound_Enabled ? 0 : 1];
-        if ( sound_Enabled) {
+        SoundManager.Instance.music_Source.mute =       !sound_Enabled;
+        SoundManager.Instance.sound_Source.mute =    !sound_Enabled;
+        SoundManager.Instance.click_Source.mute =    !sound_Enabled;
+
+        if (sound_Enabled) {
             foreach (var item in players) {
                 item.audioOutputMode = VideoAudioOutputMode.Direct;
             }
@@ -38,10 +42,7 @@ public class SelectionMenu : Displayable
                 item.audioOutputMode = VideoAudioOutputMode.None;
             }
         }
-        SoundManager.Instance.music_Source.volume = sound_Enabled ? 1 : 0;
-        SoundManager.Instance.sound_Source.volume = sound_Enabled ? 1 : 0;
-        SoundManager.Instance.click_Source.volume = sound_Enabled ? 1 : 0;
+
+        
     }
-
-
 }
