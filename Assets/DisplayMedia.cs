@@ -218,15 +218,24 @@ public class DisplayMedia : Displayable
 
         while (!video_player.isPrepared)
             yield return new WaitForEndOfFrame();
-
-        video_player.Play();
+                
         video_player.GetComponent<RawImage>().enabled = true;
-            SoundManager.Instance.music_Source.Stop();
+            SoundManager.Instance.music_Source.volume=0;
+        video_player.Pause();
         Finish_Download();
         UpdatePlayButton();
-
+        
 
     }
+
+    public override void Hide()
+    {
+        base.Hide();
+
+        SoundManager.Instance.music_Source.volume = 1;
+
+    }
+
     #endregion
 
     #region image
